@@ -27,7 +27,20 @@ const handleLogin=async(uemail,password)=>{
     if(existingHashedPassword===newHashedPassword)return ({uname:user.uname,password:user.password,email:user.email});
     return null;
 }
+const handleGoogleClient=async(name,uemail)=>{
+    const user=userModel.findOne({
+        email:uemail
+    });
+    if(!user){
+        const newUser=await userModel.create({
+            uname:name,
+            email:uemail
+        });
+    }
+
+}
 module.exports={
     handleSignup,
-    handleLogin
+    handleLogin,
+    handleGoogleClient
 }

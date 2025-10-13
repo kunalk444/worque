@@ -1,6 +1,8 @@
 const {Router}=require("express");
-const {handleSignup,handleLogin}=require("../controllers/user.js")
+const {handleSignup,handleLogin,handleGoogleClient}=require("../controllers/user.js")
 const {createJwtToken} = require("../services/auth.js")
+const {OAuth2Client} = require("google-auth-library");
+const client= new OAuth2Client(process.env.CLIENT_ID);
 const userRouter=Router();
 userRouter.post("/signup",async(req,res)=>{
     try{
@@ -50,4 +52,31 @@ userRouter.post("/logout",(req,res)=>{
     })
     return res.status(200).json({success:true});
 })
+userRouter.post("/googleUser",async(req,res)=>{
+    const {token}=req.body;
+    try{
+        const ticket=await client.verifyIdToken({
+            idToken:token,
+            audience:process.env.CLIENT_ID
+        })
+        const data=ticket.getPayload();
+        if(data.email_verified){
+            await handleGoogleClient({uname:data.name,email:data.email});
+            const cookieToken=createJwtToken({uname:data.name,email:data.email});
+            res.cookie("jwt",cookieToken,{
+            httpOnly:true,
+            maxAge:24*60*60*100,
+            sameSite:"Strict",
+            secure:false,
+            })
+            return res.json({success:true,uname:data.name,email:data.email});
+        }
+        return res.json({success:false});
+    }
+    catch(err){
+        console.error(err);
+        return res.status(401).json({success:false});
+    }
+
+});
 module.exports={userRouter};

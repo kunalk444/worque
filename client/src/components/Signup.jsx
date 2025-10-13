@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveData } from '../slices/userSlice';
 import '../App.css'
+import { GoogleLogin } from '@react-oauth/google';
 
 function Signup({ show, onClose }) {
   const [name, setName] = useState("");
@@ -18,11 +19,27 @@ function Signup({ show, onClose }) {
     });
     const data = await res.json();
     if (data.success) {
-      dispatch(saveData({ uname: name, email:email }));
+      dispatch(saveData({ uname:name, email:email }));
       onClose();
       console.log(name);
       alert(`welcome to worque:${name}`);
     }
+  }
+  const verifyGoogleLogin=async(tokenId)=>{
+      const data=await fetch("http://localhost:5000/user/googleUser",{
+        credentials:"include",
+        method:"POST",
+        headers:{
+          'Content-type':'application/json'
+        },
+        body:JSON.stringify({token:tokenId})
+      });
+      const res=await data.json();
+      if(res.success){
+        dispatch(saveData({ uname: res.uname, email:res.email ,isLoggedIn:true }));
+        onClose();
+      }
+      
   }
 
   if (!show) return null;
@@ -78,6 +95,14 @@ return (
           >
             Sign Up
           </button>
+          <GoogleLogin
+            onSuccess={(res)=>{
+                verifyGoogleLogin(res.credential);
+            }}
+            onError={()=>{
+              console.log("login failed!");
+            }}
+          />
         </div>
       </form>
     </div>
