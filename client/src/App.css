@@ -1,1 +1,41 @@
  @import "tailwindcss";
+ .board{
+
+    padding: 20px;
+    margin: 20px;
+    height: 700px;
+    border-radius: 20px;
+    border: 14px black;
+    background-color:purple;
+    display: flex;
+    gap:100px;
+ }
+ .columns{
+    flex:1;
+    border-radius: 15px;
+    box-sizing: 0 2px 5px rgba(0,0,0,1);
+    padding: 10px;
+    background-color:bisque;
+ }
+ .columntitle{
+    font-size: 40px;
+    align-content: center;
+ }
+ .columnbutton {
+     width:auto;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);               
+    -webkit-backdrop-filter: blur(8px);       
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    border-radius: 12px;                       
+    padding: 10px 20px;                        
+    color: black;                              
+    cursor: pointer;
+    transition: all 0.3s ease;               
+}
+
+.columnbutton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);   
+}

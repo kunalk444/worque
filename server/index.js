@@ -5,6 +5,7 @@ const cors=require('cors');
 const {userRouter}=require("./routes/user.js")
 const {connectDb}=require("./connection.js");
 const cookieParser=require("cookie-parser");
+const {taskRouter}=require("./routes/tasks.js");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -16,6 +17,7 @@ app.use(cors(
 ));
 app.use("/auth",authRouter);
 app.use("/user",userRouter);
+app.use("/tasks",taskRouter);
 
 connectDb("mongodb://127.0.0.1:27017/worque").
 then(()=>{
