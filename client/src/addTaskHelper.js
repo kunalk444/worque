@@ -26,11 +26,19 @@ export function sendEmail(emailId){
         console.error(err);
     }
 }
-export async function saveTaskInfo(){
-    const arr=JSON.parse(localStorage.getItem("emails"));
+export async function saveTaskInfo(priority,description){
+    const subtasks=JSON.parse(localStorage.getItem("subtasks"));
+    const emails=JSON.parse(localStorage.getItem("emails"));
+    console.log(subtasks);
+    console.log(emails);
     const server=await fetch("http://localhost:5000/tasks/addTasks",{
         method:"POST",
-        body:JSON.stringify({emails:arr}),
+        body:JSON.stringify({
+            priority,
+            description,
+            emails,
+            subtasks,
+        }),
         credentials:"include",
         headers:{
             'Content-type':"application/json"
@@ -38,6 +46,9 @@ export async function saveTaskInfo(){
     });
     const res=await server.json();
     localStorage.removeItem("emails");
+    localStorage.removeItem("subtasks");
+   
+    console.log(res);
     if(res.success)return true;
 
 }

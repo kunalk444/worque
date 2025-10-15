@@ -10,7 +10,7 @@ const addMembers=async(emails)=>{
         pass:"eeuq otdu somn ckuf"
         }
     });
-    emails.forEach(element => {
+    emails && emails.forEach(element => {
         (async()=>{
             const msg=await transporter.sendMail({
             from:'"Kunal Kanjwani"<kanjwanikunal43@gmail.com>',
@@ -22,6 +22,10 @@ const addMembers=async(emails)=>{
     });
     return true;
 }
+async function findTaskIdAndDescByEmail(email){
+    const obj={};
+}
 module.exports={
-    addMembers
+    addMembers,
+    findTaskIdAndDescByEmail
 }

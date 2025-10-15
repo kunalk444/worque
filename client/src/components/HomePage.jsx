@@ -3,15 +3,14 @@ import { Link } from 'react-router'
 import Navbar from './Navbar';
 import { useSelector } from 'react-redux';
 import Board from '../Kanban/Board';
-
+import PreLogin from './PreLogin';
 function HomePage() {
     const user=useSelector(state=>state.user);
   return (
     <div>
         <Navbar isLoggedIn={user.isLoggedIn} userName={user.uname}/>
-        <h1>{user.isLoggedIn}</h1>
-        <h1>{user.uname}</h1>
-        <Board />
+        {!user.isLoggedIn && <PreLogin/>}
+        {user.isLoggedIn && <Board />}
     </div>
   )
 }
