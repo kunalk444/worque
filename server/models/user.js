@@ -15,6 +15,12 @@ const userSchema=mongoose.Schema({
     },
     salt:{
         type:String,
+    },
+    pending_requests:{
+        type:Array,
+    },
+    current_tasks:{
+        type:Array,
     }
 });
 userSchema.pre("save",async function(next){

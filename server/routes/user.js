@@ -7,7 +7,6 @@ const userRouter=Router();
 userRouter.post("/signup",async(req,res)=>{
     try{
      const {uname,upass,uemail}=req.body;
-     console.log(uname,upass,uemail);
      const token=await handleSignup(uname,upass,uemail);
      const cookieToken=createJwtToken(token);
      res.cookie("jwt",cookieToken,{

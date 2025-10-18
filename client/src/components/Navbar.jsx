@@ -4,6 +4,7 @@ import Signup from './Signup';
 import Login from './Login';
 import { useDispatch } from "react-redux";
 import { logout } from "../slices/userSlice";
+import { Link } from "react-router";
 
 const Navbar = ({ isLoggedIn,userName }) => {
     const dispatch=useDispatch();
@@ -34,6 +35,7 @@ const Navbar = ({ isLoggedIn,userName }) => {
             <Login show={showLogin} onClose={()=>{setShowLogin(false)}}/>
             </div>
             :<div>
+                <Link to="/pendingrequests">Pending</Link>
                 <h2>Hello {userName}😊</h2>
                 <button onClick={()=>{handleLogout()}}>Logout!</button>
             </div>

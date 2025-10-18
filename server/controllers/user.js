@@ -18,7 +18,6 @@ const handleLogin=async(uemail,password)=>{
         email:uemail
     })
     if(!user)return null;
-    console.log(user);
     const salt=user.salt;
     const existingHashedPassword=user.password;
     const newHashedPassword=crypto.createHmac("sha256",salt)

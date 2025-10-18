@@ -6,7 +6,7 @@ import Board from '../Kanban/Board';
 import PreLogin from './PreLogin';
 function HomePage() {
     const user=useSelector(state=>state.user);
-  return (
+    return (
     <div>
         <Navbar isLoggedIn={user.isLoggedIn} userName={user.uname}/>
         {!user.isLoggedIn && <PreLogin/>}

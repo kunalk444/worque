@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
-const {addMembers}=require("../controllers/tasks.js");
+const {addMembers}=require("../services/mail.js");
+const userSchema=require("../models/user.js");
 const taskSchema=mongoose.Schema({
     task_priority:{
         type:String,
@@ -14,13 +15,21 @@ const taskSchema=mongoose.Schema({
     },
     invited_members:{
         type:Array,
+    },
+    current_members:{
+        type:Array,
     }
 });
 taskSchema.post("save",async function(){
-    const user=this;
-    const ifEmailAdded=await addMembers(user.invited_members);
-    console.log(user.invited_members);
+    const task=this;
+    const ifEmailAdded=await addMembers(task.invited_members);
+    console.log(task.invited_members);
     if(ifEmailAdded)console.log("emails sent!");
+    for(let i=0;i<task.invited_members.length;i++){
+        const mail=task.invited_members[i];
+        const user=await userSchema.findOneAndUpdate({email:mail},{$push:{pending_requests:task._id}},{new:true});
+        console.log(user);
+    }
 
 });
 const taskModel=mongoose.model("tasks",taskSchema);

@@ -1,31 +1,17 @@
 const express=require("express");
-const nodemailer=require("nodemailer");
-const addMembers=async(emails)=>{
-    const transporter=nodemailer.createTransport({
-    host:"smtp.gmail.com",
-    port:465,
-    secure:true,
-    auth:{
-        user:"kanjwanikunal43@gmail.com",
-        pass:"eeuq otdu somn ckuf"
-        }
-    });
-    emails && emails.forEach(element => {
-        (async()=>{
-            const msg=await transporter.sendMail({
-            from:'"Kunal Kanjwani"<kanjwanikunal43@gmail.com>',
-            to:element,
-            subject:"join our project!",
-            text:"yo!"
-        });
-    })();    
-    });
-    return true;
+const taskModel =require("../models/tasks.js");
+const userModel=require("../models/user.js");
+
+async function preloadTaskMetaInfo(email){
+    const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
+    return obj;
+    
 }
-async function findTaskIdAndDescByEmail(email){
-    const obj={};
+const loadPendingRequests=async(email)=>{
+    const arr=await userModel.findOne({email},{pending_requests:1});
+    return arr;
 }
 module.exports={
-    addMembers,
-    findTaskIdAndDescByEmail
+    preloadTaskMetaInfo,
+    loadPendingRequests,
 }
