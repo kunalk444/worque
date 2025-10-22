@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const crypto=require("crypto");
+const pendingRequestsModel=require("./pendingrequests.js");
 const userSchema=mongoose.Schema({
     uname:{
         type:String,
@@ -7,7 +8,6 @@ const userSchema=mongoose.Schema({
     },
     password:{
         type:String,
-
     },
     email:{
         type:String,
@@ -34,5 +34,14 @@ userSchema.pre("save",async function(next){
     this.password=hMacedPassword;
     next();
 })
+userSchema.post("save",async function(){
+    const user=this;
+    const mail=user.email;
+    const pendingUser=await pendingRequestsModel.findOne({email:mail});
+    if(pendingUser){
+        const arr=pendingUser.requests;
+        await this.constructor.updateOne({_id:user._id},{$set:{pending_requests:arr}});
+    }
+});
 const userModel=mongoose.model("User",userSchema);
 module.exports=userModel;

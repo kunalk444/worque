@@ -6,12 +6,13 @@ const taskModel=require("../models/tasks.js");
 const {preloadTaskMetaInfo,loadPendingRequests} =require("../controllers/tasks.js")
 
 taskRouter.post("/addTasks",async(req,res)=>{
-    const {priority,description,emails,subtasks}=req.body;
+    const {priority,description,emails,subtasks,adminEmail}=req.body;
     const task=await taskModel.create({
         task_priority:priority,
         task_description:description,
         sub_tasks:subtasks,
         invited_members:emails,
+        admin:adminEmail
     });
     if(task!==null)return res.json({success:true});
     return res.json({success:false});

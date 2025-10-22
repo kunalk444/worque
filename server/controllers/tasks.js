@@ -4,6 +4,7 @@ const userModel=require("../models/user.js");
 
 async function preloadTaskMetaInfo(email){
     const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
+    console.log(obj);
     return obj;
     
 }
