@@ -18,7 +18,7 @@ export const loadSavedTasks=async(email)=>{
             case "later":
                 obj.later[element._id]=element.task_description;
                 break;
-            case "this week":
+            case "this_week":
                 obj.this_week[element._id]=element.task_description;
                 break;
             default:

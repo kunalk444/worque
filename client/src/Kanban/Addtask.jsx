@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react'
 import { addSubTask, saveTaskInfo, sendEmail } from '../addTaskHelper';
+import { useSelector } from 'react-redux';
 
 function Addtask({ priority, stopShow, show }) {
+    const user=useSelector(state=>state.user);
     const [member,addMember]=useState("");
     const [subtaskFlag,setSubtaskFlag]=useState(false);
     const[memberFlag,setMemberFlag]=useState(false);
@@ -11,7 +13,7 @@ function Addtask({ priority, stopShow, show }) {
     if (!show) return null;
     const handleSubmit = async(e) => {
       e.preventDefault();  
-      const done=await saveTaskInfo(priority,descriptionRef.current.value);
+      const done=await saveTaskInfo(priority,descriptionRef.current.value,user.email);
         if(done){
           stopShow;
           setTaskFlag(true); 

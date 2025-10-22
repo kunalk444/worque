@@ -1,3 +1,4 @@
+
 export function addSubTask(str){
     try{
         if(!localStorage.getItem("subtasks")){
@@ -26,11 +27,9 @@ export function sendEmail(emailId){
         console.error(err);
     }
 }
-export async function saveTaskInfo(priority,description){
+export async function saveTaskInfo(priority,description,adminEmail){
     const subtasks=JSON.parse(localStorage.getItem("subtasks"));
     const emails=JSON.parse(localStorage.getItem("emails"));
-    console.log(subtasks);
-    console.log(emails);
     const server=await fetch("http://localhost:5000/tasks/addTasks",{
         method:"POST",
         body:JSON.stringify({
@@ -38,6 +37,7 @@ export async function saveTaskInfo(priority,description){
             description,
             emails,
             subtasks,
+            adminEmail
         }),
         credentials:"include",
         headers:{
