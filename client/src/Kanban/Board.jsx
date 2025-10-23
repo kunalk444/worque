@@ -5,6 +5,7 @@ import PreLogin from '../components/PreLogin';
 import { loadSavedTasks } from '../boardHelper';
 import { saveTasksInRedux } from '../slices/taskSlice';
 
+
 function Board() {
   const dispatch=useDispatch();
   const user=useSelector(state=>state.user);

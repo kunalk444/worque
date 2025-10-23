@@ -15,100 +15,101 @@ function Signup({ show, onClose }) {
       method: "POST",
       headers: { 'Content-type': 'application/json' },
       body: JSON.stringify({ uname: name, upass: pass, uemail: email }),
-      credentials:"include",
+      credentials: "include",
     });
     const data = await res.json();
     if (data.success) {
-      dispatch(saveData({ uname:name, email:email }));
+      dispatch(saveData({ uname: name, email: email }));
       onClose();
       console.log(name);
-      alert(`welcome to worque:${name}`);
+      alert(`welcome to worque: ${name}`);
     }
   }
-  const verifyGoogleLogin=async(tokenId)=>{
-      const data=await fetch("http://localhost:5000/user/googleUser",{
-        credentials:"include",
-        method:"POST",
-        headers:{
-          'Content-type':'application/json'
-        },
-        body:JSON.stringify({token:tokenId})
-      });
-      const res=await data.json();
-      if(res.success){
-        dispatch(saveData({ uname: res.uname, email:res.email ,isLoggedIn:true }));
-        onClose();
-      }
-      
+
+  const verifyGoogleLogin = async (tokenId) => {
+    const data = await fetch("http://localhost:5000/user/googleUser", {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({ token: tokenId })
+    });
+    const res = await data.json();
+    if (res.success) {
+      dispatch(saveData({ uname: res.uname, email: res.email, isLoggedIn: true }));
+      onClose();
+    }
   }
 
   if (!show) return null;
 
-return (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 ">
-    <div className="bg-white rounded-3xl p-10 w-full max-w-lg shadow-2xl relative transition-transform transform scale-100 hover:scale-[1.02]">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSignup();
-        }}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 text-2xl"
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative transition-transform transform scale-100 hover:scale-[1.01] duration-300">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSignup();
+          }}
         >
-          ✕
-        </button>
-
-        <h2 className="text-3xl font-semibold text-center text-purple-700 mb-8 tracking-wide">
-          Create your Worque account
-        </h2>
-
-        <div className="flex flex-col gap-5">
-          <input
-            type="text"
-            value={name}
-            required
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border border-purple-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-700 transition bg-purple-50 text-purple-900 text-lg"
-            placeholder="Full Name"
-          />
-          <input
-            type="text"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-purple-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-700 transition bg-purple-50 text-purple-900 text-lg"
-            placeholder="Email"
-          />
-          <input
-            type="password"
-            value={pass}
-            required
-            onChange={(e) => setPass(e.target.value)}
-            className="w-full border border-purple-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-700 transition bg-purple-50 text-purple-900 text-lg"
-            placeholder="Password"
-          />
           <button
-            type="submit"
-            className="w-full bg-purple-700 text-white py-3 rounded-xl hover:bg-purple-800 transition font-semibold text-lg shadow-md"
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-medium transition-colors duration-200"
           >
-            Sign Up
+            ✕
           </button>
-          <GoogleLogin
-            onSuccess={(res)=>{
-                verifyGoogleLogin(res.credential);
-            }}
-            onError={()=>{
-              console.log("login failed!");
-            }}
-          />
-        </div>
-      </form>
-    </div>
-  </div>
-);
 
+          <h2 className="text-2xl font-bold text-center text-[#0d9488] mb-6 tracking-tight">
+            Create your Worque account
+          </h2>
+
+          <div className="flex flex-col gap-4">
+            <input
+              type="text"
+              value={name}
+              required
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border border-teal-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
+              placeholder="Full Name"
+            />
+            <input
+              type="text"
+              value={email}
+              required
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-teal-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
+              placeholder="Email"
+            />
+            <input
+              type="password"
+              value={pass}
+              required
+              onChange={(e) => setPass(e.target.value)}
+              className="w-full border border-teal-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
+              placeholder="Password"
+            />
+            <button
+              type="submit"
+              className="w-full bg-[#7c3aed] text-white py-3 rounded-lg hover:bg-[#6d28d9] transition-all duration-300 font-medium text-base shadow-md hover:shadow-lg"
+            >
+              Sign Up
+            </button>
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={(res) => {
+                  verifyGoogleLogin(res.credential);
+                }}
+                onError={() => {
+                  console.log("login failed!");
+                }}
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default Signup;

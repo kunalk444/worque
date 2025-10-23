@@ -3,7 +3,7 @@ const app=express();
 const {Router}=require("express");
 const taskRouter=Router();
 const taskModel=require("../models/tasks.js");
-const {preloadTaskMetaInfo,loadPendingRequests} =require("../controllers/tasks.js")
+const {preloadTaskMetaInfo,loadTaskInfo} =require("../controllers/tasks.js")
 
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
@@ -23,10 +23,11 @@ taskRouter.post("/preloadtasks",async(req,res)=>{
     if(!obj)return res.json({success:false});
     return res.json({success:true,tasks:obj});
 });
-taskRouter.post("/pendingRequests",async(req,res)=>{
-    const {email}=req.body;
-    const arr=await loadPendingRequests(email);
-    return res.json({requests:arr});
+
+taskRouter.post("/gettasks",async(req,res)=>{
+    const {taskId}=req.body;
+    const obj=await loadTaskInfo(taskId);
+    return res.json(obj);
 });
 
 module.exports= {taskRouter};

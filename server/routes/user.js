@@ -1,5 +1,5 @@
 const {Router}=require("express");
-const {handleSignup,handleLogin,handleGoogleClient}=require("../controllers/user.js")
+const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests}=require("../controllers/user.js")
 const {createJwtToken} = require("../services/auth.js")
 const {OAuth2Client} = require("google-auth-library");
 const client= new OAuth2Client(process.env.CLIENT_ID);
@@ -78,4 +78,10 @@ userRouter.post("/googleUser",async(req,res)=>{
     }
 
 });
+userRouter.post("/pendingRequests",async(req,res)=>{
+    const {email}=req.body;
+    const arr=await loadPendingRequests(email);
+    return res.json({requests:arr});
+});
+
 module.exports={userRouter};

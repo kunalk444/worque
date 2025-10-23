@@ -38,8 +38,13 @@ const handleGoogleClient=async(name,uemail)=>{
     }
 
 }
+const loadPendingRequests=async(email)=>{
+    const arr=await userModel.findOne({email},{pending_requests:1});
+    return arr;
+}
 module.exports={
     handleSignup,
     handleLogin,
-    handleGoogleClient
+    handleGoogleClient,
+    loadPendingRequests,
 }

@@ -4,15 +4,14 @@ const userModel=require("../models/user.js");
 
 async function preloadTaskMetaInfo(email){
     const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
-    console.log(obj);
     return obj;
     
 }
-const loadPendingRequests=async(email)=>{
-    const arr=await userModel.findOne({email},{pending_requests:1});
-    return arr;
+
+const loadTaskInfo=async(taskId)=>{
+    return await taskModel.findOne({_id:taskId});
 }
 module.exports={
     preloadTaskMetaInfo,
-    loadPendingRequests,
+    loadTaskInfo,
 }

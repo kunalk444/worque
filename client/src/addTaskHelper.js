@@ -28,8 +28,8 @@ export function sendEmail(emailId){
     }
 }
 export async function saveTaskInfo(priority,description,adminEmail){
-    const subtasks=JSON.parse(localStorage.getItem("subtasks"));
-    const emails=JSON.parse(localStorage.getItem("emails"));
+    const subtasks=JSON.parse(localStorage.getItem("subtasks"))||[];
+    const emails=JSON.parse(localStorage.getItem("emails"))||[];
     const server=await fetch("http://localhost:5000/tasks/addTasks",{
         method:"POST",
         body:JSON.stringify({
@@ -51,4 +51,16 @@ export async function saveTaskInfo(priority,description,adminEmail){
     console.log(res);
     if(res.success)return true;
 
+}
+
+export async function getTaskInfo(taskId){
+    const res=await fetch("http://localhost:5000/tasks/gettasks",{
+        method:'POST',
+        body:JSON.stringify({taskId}),
+        headers:{
+            'Content-Type':'application/json'
+        },
+        credentials:'include'
+    });
+    return await res.json();
 }

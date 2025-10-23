@@ -6,79 +6,68 @@ import { useDispatch } from "react-redux";
 import { logout } from "../slices/userSlice";
 import { Link } from "react-router";
 
-const Navbar = ({ isLoggedIn,userName }) => {
-    const dispatch=useDispatch();
-    const [showSignup,setShowSignup]=useState(false);
-    const [showLogin,setShowLogin]=useState(false);
-    const handleLogout=async()=>{
-        const res=await fetch("http://localhost:5000/user/logout",{
-            method:"POST",
-            credentials:"include"
+const Navbar = ({ isLoggedIn, userName }) => {
+    const dispatch = useDispatch();
+    const [showSignup, setShowSignup] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
+    
+    const handleLogout = async () => {
+        const res = await fetch("http://localhost:5000/user/logout", {
+            method: "POST",
+            credentials: "include"
         })
-        const msg=await res.json();
-        if(msg.success)console.log("logged out!");
+        const msg = await res.json();
+        if (msg.success) console.log("logged out!");
 
         dispatch(logout());
     }
-  return (
-    <nav style={styles.navbar}>
-      <div style={styles.name}>Worque</div>
-      {(!isLoggedIn)?
-            <div style={styles.buttons}>
-                <button onClick={()=>setShowSignup(true)}>
-                    Signup
-                </button>
-                <Signup show={showSignup} onClose={()=>{setShowSignup(false)}}/>
-                <button onClick={()=>setShowLogin(true)}>
-                    Login
-                </button>
-            <Login show={showLogin} onClose={()=>{setShowLogin(false)}}/>
-            </div>
-            :<div>
-                <Link to="/pendingrequests">Pending</Link>
-                <h2>Hello {userName}😊</h2>
-                <button onClick={()=>{handleLogout()}}>Logout!</button>
-            </div>
 
-      }
-    </nav>
-  );
-};
-
-const styles = {
-  navbar: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0.75rem 1.5rem",
-    backgroundColor: "#6a4fb4",
-    color: "#fff",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-  },
-  name: {
-    fontSize: "1.3rem",
-    fontWeight: "bold",
-  },
-  buttons: {
-    display: "flex",
-    gap: "0.75rem",
-  },
-  button: {
-    padding: "0.5rem 1rem",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "0.95rem",
-    transition: "all 0.3s ease",
-  },
-  create: {
-    backgroundColor: "#fff",
-    color: "#6a4fb4",
-  },
-  login: {
-    backgroundColor: "#4f2fb4",
-    color: "#fff",
-  },
+    return (
+        <nav className="flex justify-between items-center px-8 py-4 bg-gradient-to-r from-[#0d9488] to-[#7c3aed] text-white shadow-lg">
+            <div className="text-2xl font-extrabold tracking-tight">
+                Worque
+            </div>
+            
+            {(!isLoggedIn) ? (
+                <div className="flex gap-4">
+                    <button 
+                        onClick={() => setShowSignup(true)}
+                        className="px-5 py-2.5 rounded-lg text-sm font-medium bg-white text-[#0d9488] hover:bg-gray-100 hover:scale-105 transition-all duration-300 ease-in-out shadow-md hover:shadow-xl"
+                    >
+                        Signup
+                    </button>
+                    <Signup show={showSignup} onClose={() => { setShowSignup(false) }} />
+                    
+                    <button 
+                        onClick={() => setShowLogin(true)}
+                        className="px-5 py-2.5 rounded-lg text-sm font-medium bg-[#6d28d9] text-white hover:bg-[#5b21b6] hover:scale-105 transition-all duration-300 ease-in-out shadow-md hover:shadow-xl"
+                    >
+                        Login
+                    </button>
+                    <Login show={showLogin} onClose={() => { setShowLogin(false) }} />
+                </div>
+            ) : (
+                <div className="flex items-center gap-8">
+                    <Link 
+                        to="/pendingrequests"
+                        className="text-white text-sm font-medium hover:text-teal-100 transition-all duration-200 relative group"
+                    >
+                        Pending
+                        <span className="absolute left-0 bottom-0 w-full h-0.5 bg-teal-100 scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                    </Link>
+                    <h2 className="text-white text-base font-medium flex items-center gap-2">
+                        Hello {userName} <span className="text-xl">😎</span>
+                    </h2>
+                    <button 
+                        onClick={() => { handleLogout() }}
+                        className="px-5 py-2.5 rounded-lg text-sm font-medium bg-transparent border border-white/50 text-white hover:bg-white/10 hover:scale-105 transition-all duration-300 ease-in-out shadow-md hover:shadow-xl"
+                    >
+                        Logout
+                    </button>
+                </div>
+            )}
+        </nav>
+    );
 };
 
 export default Navbar;
