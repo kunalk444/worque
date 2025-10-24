@@ -25,7 +25,6 @@ userRouter.post("/signup",async(req,res)=>{
 userRouter.post("/login",async(req,res)=>{
     try{
         const {uemail,upass}=req.body;
-        console.log(req.body);
         const existingUser= await handleLogin(uemail,upass);
         if(!existingUser)return res.status(400).json({success:false});
         const cookieToken=createJwtToken(existingUser);
@@ -83,5 +82,9 @@ userRouter.post("/pendingRequests",async(req,res)=>{
     const arr=await loadPendingRequests(email);
     return res.json({requests:arr});
 });
-
+userRouter.post("/handlependingrequests",async(req,res)=>{
+    const {taskId,type}=req.body;
+    const obj=await handlePendingRequests(taskId,type);
+    return res.json(obj);
+})
 module.exports={userRouter};

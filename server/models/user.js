@@ -41,6 +41,7 @@ userSchema.post("save",async function(){
     if(pendingUser){
         const arr=pendingUser.requests;
         await this.constructor.updateOne({_id:user._id},{$set:{pending_requests:arr}});
+        pendingRequestsModel.deleteOne({_id:pendingUser._id});
     }
 });
 const userModel=mongoose.model("User",userSchema);
