@@ -19,10 +19,8 @@ function Signup({ show, onClose }) {
     });
     const data = await res.json();
     if (data.success) {
-      dispatch(saveData({ uname: name, email: email }));
+      dispatch(saveData({ uname: name, email: email,id:data.id }));
       onClose();
-      console.log(name);
-      alert(`welcome to worque: ${name}`);
     }
   }
 

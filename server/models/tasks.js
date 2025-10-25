@@ -33,7 +33,7 @@ taskSchema.post("save",async function(){
     if(ifEmailAdded)console.log("emails sent!");
     for(let i=0;i<task.invited_members.length;i++){
         const mail=task.invited_members[i];
-        const user=await userModel.findOneAndUpdate({email:mail},{$push:{pending_requests:task._id}},{new:true});
+        const user=await userModel.findOneAndUpdate({email:mail},{$addToSet:{pending_requests:task._id}},{new:true});
         if(!user){
             const newUser=await pendingRequestsModel.findOneAndUpdate({email:mail},{$addToSet:{requests:task._id}},{upsert:true,new:true});
         }

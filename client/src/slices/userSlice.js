@@ -8,6 +8,7 @@ const userSlice=createSlice({
         uname:"",
         email:"",
         isLoggedIn:false,
+        id:"",
 
     },
     reducers:{
@@ -16,12 +17,13 @@ const userSlice=createSlice({
             state.uname=obj.uname;
             state.email=obj.email;
             state.isLoggedIn=true;
+            state.id=obj.id;
         },
         logout:(state,action)=>{
             state.uname="";
             state.isLoggedIn=false;
             state.email="";
-            //localStorage.removeItem("persistedState");
+            state.id="";
         }
     }
 });

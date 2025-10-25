@@ -1,5 +1,5 @@
 const {Router}=require("express");
-const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests}=require("../controllers/user.js")
+const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests,handlePendingRequests}=require("../controllers/user.js")
 const {createJwtToken} = require("../services/auth.js")
 const {OAuth2Client} = require("google-auth-library");
 const client= new OAuth2Client(process.env.CLIENT_ID);
@@ -16,7 +16,7 @@ userRouter.post("/signup",async(req,res)=>{
         secure:false,
 
      })
-     return res.status(201).json({success:true,message:"signup successful!"});
+     return res.status(201).json({success:true,message:"signup successful!",id:token.id});
     }
     catch(err){
         return res.status(400).json({success:false,"error":err})
@@ -34,8 +34,9 @@ userRouter.post("/login",async(req,res)=>{
             sameSite:"Strict",
             secure:false,
         });
+        console.log(existingUser.id);
         return res.status(201).json({success:true,message:"login successful!",
-            user:{uname:existingUser.uname,email:existingUser.email}});
+            user:{uname:existingUser.uname,email:existingUser.email,id:existingUser.id}});
 
     }catch(err){
         return res.status(400).json({success:false,"error":err});
@@ -83,8 +84,9 @@ userRouter.post("/pendingRequests",async(req,res)=>{
     return res.json({requests:arr});
 });
 userRouter.post("/handlependingrequests",async(req,res)=>{
-    const {taskId,type}=req.body;
-    const obj=await handlePendingRequests(taskId,type);
-    return res.json(obj);
+    const {userId,taskId,type}=req.body;
+    const obj=await handlePendingRequests(userId,taskId,type);
+    if(obj.success)return res.json(obj);
+    return res.json({success:false});
 })
 module.exports={userRouter};

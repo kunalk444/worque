@@ -1,6 +1,7 @@
 const mongoose=require("mongoose");
 const crypto=require("crypto");
 const pendingRequestsModel=require("./pendingrequests.js");
+const { type } = require("os");
 const userSchema=mongoose.Schema({
     uname:{
         type:String,
@@ -20,7 +21,11 @@ const userSchema=mongoose.Schema({
         type:Array,
     },
     current_tasks:{
-        type:Array,
+        type:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+            }
+        ],
     }
 });
 userSchema.pre("save",async function(next){

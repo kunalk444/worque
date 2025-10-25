@@ -26,7 +26,8 @@ function Login({ show, onClose }) {
       setPass("");
     }
     if (data.success) {
-      dispatch(saveData({ uname: data.user.uname, email: email, isLoggedIn: true }));
+      console.log(data.id);
+      dispatch(saveData({ uname: data.user.uname,email: data.user.email,isLoggedIn: true,id:data.user.id}));
       onClose();
       console.log(data.user.uname);
     }
