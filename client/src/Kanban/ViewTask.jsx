@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getTaskInfo } from '../addTaskHelper';
 import Members from './Members';
+import { useSelector } from 'react-redux';
 
 function ViewTask(props) {
     const [taskInfo, setTaskInfo] = useState();
-    const [invited, setInvited] = useState(false);
     const [current, setCurrent] = useState(false);
+    const[invited,setInvited]=useState(false);
     const { stopShow, taskDesc, taskId } = props;
+    const user = useSelector(state => state.user);
 
     useEffect(() => {
         if (props.show) {
@@ -30,9 +32,27 @@ function ViewTask(props) {
                 </button>
                 <h2 className="text-4xl font-extrabold text-[#0d9488] mb-10 tracking-wide">Task Description: {taskDesc}</h2>
                 <h3 className="text-2xl font-semibold text-gray-800 mb-8">Admin: {taskInfo && taskInfo.admin}</h3>
-                <h3 className="text-2xl font-semibold text-gray-800 mb-8">Subtasks:</h3>
+                <div className="flex items-center justify-between space-x-4 mb-8">
+    <h3 className="text-2xl font-semibold text-gray-800">Subtasks:</h3>
+    {
+        taskInfo && taskInfo.admin === user.email && (
+            <div className="flex space-x-2">
+                <button
+                    className="bg-[#0d9488] text-white px-6 py-3 rounded-xl hover:bg-teal-700 transition duration-300 text-lg font-semibold shadow-md hover:shadow-lg"
+                >
+                    Assign Tasks
+                </button>
+                <button
+                    className="bg-[#7c3aed] text-white px-6 py-3 rounded-xl hover:bg-[#6d28d9] transition duration-300 text-lg font-semibold shadow-md hover:shadow-lg"
+                >
+                    Add Tasks
+                </button>
+            </div>
+        )
+    }
+</div>
                 {
-                    taskInfo && taskInfo.sub_tasks && taskInfo.sub_tasks.map((element) => {
+                    taskInfo && taskInfo.sub_tasks && Object.keys(taskInfo.sub_tasks).map((element) => {
                         return (
                             <div key={element} className="flex items-center space-x-6 mb-6">
                                 <input
@@ -52,15 +72,20 @@ function ViewTask(props) {
                     >
                         View Current Members
                     </button>
-                    <button
-                        onClick={() => setInvited(true)}
+                    {
+                        taskInfo && user.email===taskInfo.admin && 
+                        <button
+                        onClick={() => setCurrent(true)}
                         className="bg-[#7c3aed] text-white px-8 py-4 rounded-xl hover:bg-[#6d28d9] transition duration-300 text-xl font-semibold shadow-md hover:shadow-lg"
-                    >
+                        >
                         View Invited Members
-                    </button>
+                        </button>
+                    }
                 </div>
-                {taskInfo && <Members show={current} stopShow={() => setCurrent(false)} type="current" members={taskInfo.current_members} />}
-                {taskInfo && <Members show={invited} stopShow={() => setInvited(false)} type="invited" members={taskInfo.invited_members} />}
+                {taskInfo && <Members show={current} stopShow={() => setCurrent(false)} type="current" members={taskInfo.current_members} admin={taskInfo.admin} />}
+                {taskInfo && 
+                    <Members show={invited} stopShow={() => setInvited(false)} type="current" members={taskInfo.current_members} admin={taskInfo.admin} />
+                }
             </div>
         </div>
     );

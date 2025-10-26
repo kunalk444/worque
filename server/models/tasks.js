@@ -12,7 +12,8 @@ const taskSchema=mongoose.Schema({
         required:true
     },
     sub_tasks:{
-        type:Array,
+        type:Map,
+        of:String,
     },
     invited_members:{
         type:Array,
@@ -23,6 +24,19 @@ const taskSchema=mongoose.Schema({
     admin:{
         type:String,
         required:true,
+    }
+},
+{
+    toJSON:{
+        transform:(doc,ans)=>{
+            if(ans.sub_tasks && ans.sub_tasks instanceof Map){
+                ans.sub_tasks=Object.fromEntries(ans.sub_tasks);
+            }
+            else if(ans.sub_tasks && ans.sub_tasks.entries==="function"){
+                ans.sub_tasks=Object.fromEntries(ans.sub_tasks.entries());
+            } 
+            return ans;
+        }
     }
 });
 taskSchema.post("save",async function(){

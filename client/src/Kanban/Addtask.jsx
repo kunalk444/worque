@@ -7,12 +7,12 @@ import { saveTasksInRedux } from '../slices/taskSlice';
 function Addtask({ priority, stopShow, show }) {
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
-    const [member, addMember] = useState("");
     const [subtaskFlag, setSubtaskFlag] = useState(false);
     const [memberFlag, setMemberFlag] = useState(false);
     const [taskFlag, setTaskFlag] = useState(false);
     const descriptionRef = useRef("");
     const subRef = useRef("");
+    const emailRef=useRef("");
 
     if (!show) return null;
 
@@ -66,7 +66,11 @@ function Addtask({ priority, stopShow, show }) {
             <div className="bg-white rounded-xl p-8 w-full max-w-2xl shadow-2xl relative transition-transform transform scale-100 hover:scale-[1.01] duration-300">
                 <button
                     className="absolute top-4 right-4 text-xl font-semibold text-gray-600 hover:text-gray-800 transition-colors duration-200"
-                    onClick={stopShow}
+                    onClick={()=>{
+                        stopShow();
+                        localStorage.removeItem("emails");
+                        localStorage.removeItem("subtasks");
+                    }}
                 >
                     X
                 </button>
@@ -107,15 +111,16 @@ function Addtask({ priority, stopShow, show }) {
                                 type='email'
                                 placeholder="Enter email id!"
                                 className="flex-1 p-4 rounded-lg border border-teal-200 outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
-                                onChange={(e) => {
-                                    addMember(e.target.value);
-                                }}
+                                ref={emailRef}
                             />
                             <button
                                 className="bg-[#7c3aed] text-white rounded-lg px-6 py-3 hover:bg-[#6d28d9] transition-all duration-300 text-base shadow-md hover:shadow-lg"
                                 onClick={() => {
-                                    const done = sendEmail(member);
-                                    if (done) setMemberFlag(done);
+                                    const done = sendEmail(emailRef.current.value);
+                                    emailRef.current.value="";
+                                    if (done) {
+                                        setMemberFlag(done);
+                                    }
                                 }}
                                 type='button'
                             >

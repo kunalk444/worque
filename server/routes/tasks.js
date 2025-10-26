@@ -7,10 +7,12 @@ const {preloadTaskMetaInfo,loadTaskInfo} =require("../controllers/tasks.js")
 
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
+    const map=new Map();
+    for(const ele of subtasks)map.set(ele,"");
     const task=await taskModel.create({
         task_priority:priority,
         task_description:description,
-        sub_tasks:subtasks,
+        sub_tasks:map,
         invited_members:emails,
         admin:adminEmail
     });
