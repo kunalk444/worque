@@ -43,6 +43,7 @@ function PendingRequests() {
                             <div className="flex space-x-4">
                                 <button className="bg-white text-[#0d9488] px-4 py-2 rounded-lg hover:bg-teal-100 transition duration-300 text-lg font-semibold shadow-md hover:shadow-lg border-2 border-[#0d9488]"
                                         onClick={async()=>{
+                                            console.log("clicked!");
                                             const obj=await handlePendingRequests(user.id,ele,"accept");
                                             if(obj.success)setAcceptFlag(true);
                                         }}
@@ -51,6 +52,7 @@ function PendingRequests() {
                                 </button>
                                 <button className="bg-white text-[#7c3aed] px-4 py-2 rounded-lg hover:bg-purple-100 transition duration-300 text-lg font-semibold shadow-md hover:shadow-lg border-2 border-[#7c3aed]"
                                         onClick={async()=>{
+                                            console.log("clicked!");
                                             const obj=await handlePendingRequests(user.id,ele,"reject");
                                             if(obj.success)setRejectFlag(true);
                                         }}

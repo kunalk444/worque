@@ -31,7 +31,7 @@ const handleLogin=async(uemail,password)=>{
     return null;
 }
 const handleGoogleClient=async(name,uemail)=>{
-    const user=userModel.findOne({
+    const user=await userModel.findOne({
         email:uemail
     });
     if(!user){
@@ -39,7 +39,12 @@ const handleGoogleClient=async(name,uemail)=>{
             uname:name,
             email:uemail
         });
+        console.log(newUser);
+        return newUser;
     }
+    console.log(user);
+    return user;
+    
 
 }
 const loadPendingRequests=async(email)=>{
@@ -58,9 +63,9 @@ const handlePendingRequests=async(userId,taskId,type)=>{
     try{
         const obj=await userModel.updateOne({_id:userId},{$pull:{pending_requests:new mongoose.Types.ObjectId(taskId)}});
         if(type=="accept"){
-            const taskAddedInUser=await userModel.updateOne({_id:userId},{$addToSet:{current_tasks:mongoose.Types.ObjectId(taskId)}},{returnDocument:"after"});
+            const taskAddedInUser=await userModel.findByIdAndUpdate(userId,{$addToSet:{current_tasks:new mongoose.Types.ObjectId(taskId)}},{new:true});
             console.log(taskAddedInUser);
-            const addInTaskDb=await taskModel.updateOne({_id:taskId},{$addToSet:{current_members:taskAddedInUser.email}});
+            const addInTaskDb=await taskModel.findByIdAndUpdate(taskId,{$addToSet:{current_members:taskAddedInUser.email}});
         }
         return {success:true};
     }catch(err){

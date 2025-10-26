@@ -35,7 +35,7 @@ function Signup({ show, onClose }) {
     });
     const res = await data.json();
     if (res.success) {
-      dispatch(saveData({ uname: res.uname, email: res.email, isLoggedIn: true }));
+      dispatch(saveData({ uname:res.uname,email:res.email,isLoggedIn:true,id:res.id}));
       onClose();
     }
   }

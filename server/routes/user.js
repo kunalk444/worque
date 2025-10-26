@@ -58,17 +58,18 @@ userRouter.post("/googleUser",async(req,res)=>{
             idToken:token,
             audience:process.env.CLIENT_ID
         })
-        const data=ticket.getPayload();
+        const data=await ticket.getPayload();
         if(data.email_verified){
-            await handleGoogleClient({uname:data.name,email:data.email});
-            const cookieToken=createJwtToken({uname:data.name,email:data.email});
+            const user=await handleGoogleClient(data.name,data.email);
+            console.log(user._id);
+            const cookieToken=createJwtToken({uname:data.name,email:data.email,id:user._id});
             res.cookie("jwt",cookieToken,{
             httpOnly:true,
             maxAge:24*60*60*100,
             sameSite:"Strict",
             secure:false,
             })
-            return res.json({success:true,uname:data.name,email:data.email});
+            return res.json({success:true,uname:data.name,email:data.email,id:user._id});
         }
         return res.json({success:false});
     }
