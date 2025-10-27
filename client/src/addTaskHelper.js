@@ -53,7 +53,7 @@ export async function saveTaskInfo(priority,description,adminEmail){
 
 }
 
-export async function getTaskInfo(taskId){
+export async function getCurrTask(taskId){
     const res=await fetch("http://localhost:5000/tasks/gettasks",{
         method:'POST',
         body:JSON.stringify({taskId}),
