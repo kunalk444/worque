@@ -4,11 +4,13 @@ import Members from './Members';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { addData } from '../slices/insideTask';
+import AssignTasks from './AssignTasks';
 
 function ViewTask(props) {
     const [current, setCurrent] = useState(false);
     const[invited,setInvited]=useState(false);
     const { stopShow, taskDesc, taskId } = props;
+    const[assignTaskFlag,setAssignTaskFlag]=useState(false);
     const user = useSelector(state => state.user);
     const currTask=useSelector(state=>state.insideTask.taskData);
     const dispatch=useDispatch();
@@ -18,9 +20,10 @@ function ViewTask(props) {
                 const arr = await getCurrTask(taskId);
                 arr.isVisible=true;
                 dispatch(addData(arr));
+                console.log(arr);
             })();
         }
-    }, [taskId, props.show,dispatch]);
+    }, [props.show,assignTaskFlag]);
 
     if (!currTask || !currTask.isVisible) return;
 
@@ -46,6 +49,7 @@ function ViewTask(props) {
             <div className="flex space-x-2">
                 <button
                     className="bg-[#0d9488] text-white px-6 py-3 rounded-xl hover:bg-teal-700 transition duration-300 text-lg font-semibold shadow-md hover:shadow-lg"
+                    onClick={()=>setAssignTaskFlag(true)}
                 >
                     Assign Tasks
                 </button>
@@ -68,6 +72,7 @@ function ViewTask(props) {
                                     className="w-6 h-6 text-[#0d9488] focus:ring-4 focus:ring-[#0d9488]/50 transition duration-300 border-2 border-gray-300 rounded-full checked:bg-[#0d9488] checked:border-transparent"
                                 />
                                 <span className="text-xl text-gray-800 font-medium">{element}</span>
+                                {currTask.sub_tasks[element].length>0 && <p className='italic'>~Assigned to {currTask.sub_tasks[element]}</p>}
                             </div>
                         );
                     })
@@ -82,7 +87,7 @@ function ViewTask(props) {
                     {
                         currTask && user.email===currTask.admin && 
                         <button
-                        onClick={() => setCurrent(true)}
+                        onClick={() => setInvited(true)}
                         className="bg-[#7c3aed] text-white px-8 py-4 rounded-xl hover:bg-[#6d28d9] transition duration-300 text-xl font-semibold shadow-md hover:shadow-lg"
                         >
                         View Invited Members
@@ -91,7 +96,11 @@ function ViewTask(props) {
                 </div>
                 {currTask && <Members show={current} stopShow={() => setCurrent(false)} type="current" members={currTask.current_members} admin={currTask.admin} />}
                 {currTask && 
-                    <Members show={invited} stopShow={() => setInvited(false)} type="invited" members={currTask.current_members} admin={currTask.admin} />
+                    <Members show={invited} stopShow={() => setInvited(false)} type="invited" members={currTask.invited_members} admin={currTask.admin} />
+                }
+                {
+                    currTask && assignTaskFlag && 
+                        <AssignTasks show={assignTaskFlag} stopShow={()=>setAssignTaskFlag(false)}/>
                 }
             </div>
         </div>

@@ -3,7 +3,7 @@ const app=express();
 const {Router}=require("express");
 const taskRouter=Router();
 const taskModel=require("../models/tasks.js");
-const {preloadTaskMetaInfo,loadTaskInfo} =require("../controllers/tasks.js")
+const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks} =require("../controllers/tasks.js")
 
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
@@ -30,6 +30,12 @@ taskRouter.post("/gettasks",async(req,res)=>{
     const {taskId}=req.body;
     const obj=await loadTaskInfo(taskId);
     return res.json(obj);
+});
+taskRouter.post("/assignsubtasks",async(req,res)=>{
+    const {member,subtask,id}=req.body;
+    console.log(member,subtask,id);
+    const recdData=await assignSubTasks(member,subtask,id);
+    return res.json(recdData);
 });
 
 module.exports= {taskRouter};
