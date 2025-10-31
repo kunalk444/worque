@@ -64,3 +64,15 @@ export async function getCurrTask(taskId){
     });
     return await res.json();
 }
+export async function handleCompletedSubtasks(desc,id){
+    const data=await fetch("http://localhost:5000/tasks/completedsubtask",{
+        method:'POST',
+        body:JSON.stringify({desc,id}),
+        headers:{
+            'Content-type':'application/json'
+        },
+        credentials:'include'
+        });
+        const res=await data.json();
+        return res;
+}

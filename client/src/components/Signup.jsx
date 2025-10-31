@@ -8,8 +8,9 @@ function Signup({ show, onClose }) {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [email, setEmail] = useState("");
+  const [existingUserFlag,setExistingUserFlag]=useState(false);
   const dispatch = useDispatch();
-
+  existingUserFlag && setTimeout(()=>setExistingUserFlag(false),1700);
   const handleSignup = async () => {
     const res = await fetch("http://localhost:5000/user/signup", {
       method: "POST",
@@ -22,6 +23,8 @@ function Signup({ show, onClose }) {
       dispatch(saveData({ uname: name, email: email,id:data.id }));
       onClose();
     }
+    if(!data.success)setExistingUserFlag(true);
+    
   }
 
   const verifyGoogleLogin = async (tokenId) => {
@@ -44,6 +47,22 @@ function Signup({ show, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      {existingUserFlag && (
+  <div className="absolute inset-0 flex items-start justify-center pointer-events-none z-50">
+    <div
+      className={`
+        mt-4 px-5 py-2.5 bg-amber-100 text-amber-800
+        rounded-lg font-semibold text-sm shadow-lg
+        animate-pulse-once whitespace-nowrap
+      `}
+      style={{
+        animation: 'fadeInOut 1.7s ease-out forwards',
+      }}
+    >
+      User Already Exists!Try Logging in
+    </div>
+  </div>
+)}
       <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative transition-transform transform scale-100 hover:scale-[1.01] duration-300">
         <form
           onSubmit={(e) => {
@@ -52,7 +71,13 @@ function Signup({ show, onClose }) {
           }}
         >
           <button
-            onClick={onClose}
+            onClick={()=>{
+              setName("");
+              setPass("");
+              setEmail("");
+              onClose();
+            }
+          }
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-medium transition-colors duration-200"
           >
             ✕

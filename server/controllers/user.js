@@ -5,6 +5,8 @@ const taskModel = require("../models/tasks.js");
 const pendingRequestsModel = require("../models/pendingrequests.js");
 const handleSignup=async(uname,password,email)=>{
     try{
+        const ifExists=await userModel.findOne({email});
+        if(ifExists)return false;
         const newUser= await userModel.create({
             uname,
             password,

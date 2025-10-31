@@ -8,6 +8,7 @@ userRouter.post("/signup",async(req,res)=>{
     try{
      const {uname,upass,uemail}=req.body;
      const token=await handleSignup(uname,upass,uemail);
+     if(token==false)return res.json({success:false,message:"user already exists!"});
      const cookieToken=createJwtToken(token);
      res.cookie("jwt",cookieToken,{
         httpOnly:true,

@@ -24,6 +24,9 @@ const taskSchema=mongoose.Schema({
     admin:{
         type:String,
         required:true,
+    },
+    completed_subtasks:{
+        type:Array,
     }
 },
 {

@@ -24,8 +24,45 @@ const assignSubTasks=async(member,subtask,id)=>{
     }
     return {success:false};
 }
+const addSubTasks=async(taskId,desc)=>{
+    const done=await taskModel.findOneAndUpdate(
+                {_id:taskId},
+                {
+                    $set:{
+                        [`sub_tasks.${desc}`]:"",
+                    }
+                },
+                {
+                    new:true
+                }
+            )
+    if(done)return {success:true,newDoc:done};
+    return {success:false};
+}
+const handleCompletedSubtask=async(desc,id)=>{
+    const newDoc=await taskModel.findOneAndUpdate(
+                {
+                    _id:id
+                },
+                {
+                    $unset:{
+                        [`sub_tasks.${desc}`]:""
+                    },
+                    $addToSet:{
+                        completed_subtasks:desc 
+                    }
+                },
+                {
+                    new:true
+                }
+            );
+    if(newDoc)return {success:true,newDoc};
+    return {success:false};
+}
 module.exports={
     preloadTaskMetaInfo,
     loadTaskInfo,
     assignSubTasks,
+    addSubTasks,
+    handleCompletedSubtask,
 }
