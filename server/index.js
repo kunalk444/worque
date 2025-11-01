@@ -8,6 +8,7 @@ const cookieParser=require("cookie-parser");
 const {taskRouter}=require("./routes/tasks.js");
 
 app.use(express.json());
+app.use(express.text());
 app.use(cookieParser());
 app.use(cors(
     {

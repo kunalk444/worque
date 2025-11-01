@@ -3,7 +3,7 @@ const app=express();
 const {Router}=require("express");
 const taskRouter=Router();
 const taskModel=require("../models/tasks.js");
-const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks,addSubTasks,handleCompletedSubtask} =require("../controllers/tasks.js")
+const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks,addSubTasks,handleCompletedSubtask,handleDraggedTask} =require("../controllers/tasks.js")
 
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
@@ -48,5 +48,10 @@ taskRouter.post("/completedsubtask",async(req,res)=>{
     const subRes=await handleCompletedSubtask(desc,id);
     return res.json(subRes);
 });
+taskRouter.post("/draggedtasks",async(req,res)=>{
+    const {id,type,email}=req.body;
+    const dragRes=await handleDraggedTask(id,type,email);
+    return  res.json(dragRes);
+})
 
 module.exports= {taskRouter};

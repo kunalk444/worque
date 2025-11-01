@@ -57,7 +57,20 @@ const handleCompletedSubtask=async(desc,id)=>{
                 }
             );
     if(newDoc)return {success:true,newDoc};
-    return {success:false};
+    
+}
+const handleDraggedTask=async(id,type,email)=>{
+    const newDoc=await taskModel.findOneAndUpdate(
+        {
+            _id:id
+        },
+        {
+            task_priority:type
+        }
+    );
+    if(!newDoc)return {success:false};
+    return {success:true,newDoc};
+    
 }
 module.exports={
     preloadTaskMetaInfo,
@@ -65,4 +78,5 @@ module.exports={
     assignSubTasks,
     addSubTasks,
     handleCompletedSubtask,
+    handleDraggedTask,
 }
