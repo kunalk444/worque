@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveData } from '../slices/userSlice';
-import '../App.css'
+import '../App.css';
+import { GoogleLogin } from '@react-oauth/google';
+
 
 function Login({ show, onClose }) {
   const [pass, setPass] = useState("");
@@ -32,6 +34,22 @@ function Login({ show, onClose }) {
       console.log(data.user.uname);
     }
   }
+
+    const verifyGoogleLogin = async (tokenId) => {
+      const data = await fetch("http://localhost:5000/user/googleUser", {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({ token: tokenId })
+      });
+      const res = await data.json();
+      if (res.success) {
+        dispatch(saveData({ uname:res.uname,email:res.email,isLoggedIn:true,id:res.id}));
+        onClose();
+      }
+    }
 
   if (!show) return null;
 
@@ -84,6 +102,16 @@ function Login({ show, onClose }) {
             >
               Login
             </button>
+              <div className="flex justify-center">
+                  <GoogleLogin
+                     onSuccess={(res) => {
+                      verifyGoogleLogin(res.credential);
+                  }}
+                  onError={() => {
+                    console.log("login failed!");
+                  }}
+              />
+            </div>
           </div>
         </form>
       </div>

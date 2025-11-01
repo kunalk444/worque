@@ -10,7 +10,7 @@ import AddSubTask from './AddSubTask';
 function ViewTask(props) {
     const [current, setCurrent] = useState(false);
     const[invited,setInvited]=useState(false);
-    const { stopShow, taskDesc, taskId } = props;
+    const { stopShow,taskId } = props;
     const[assignTaskFlag,setAssignTaskFlag]=useState(false);
     const [subtaskFlag,setSubtaskFlag]=useState(false);
     const user = useSelector(state => state.user);
@@ -24,10 +24,9 @@ function ViewTask(props) {
                 const arr = await getCurrTask(taskId);
                 arr.isVisible=true;
                 dispatch(addData(arr));
-                console.log(arr);
             })();
         }
-    }, [props.show,assignTaskFlag]);
+    }, [props.show,assignTaskFlag,subtaskFlag]);
 
     if (!currTask || !currTask.isVisible) return;
 
@@ -44,7 +43,7 @@ function ViewTask(props) {
                 >
                     X
                 </button>
-                <h2 className="text-4xl font-extrabold text-[#0d9488] mb-10 tracking-wide">Task Description: {taskDesc}</h2>
+                <h2 className="text-4xl font-extrabold text-[#0d9488] mb-10 tracking-wide">Task Description: {currTask?currTask.task_description:"Loading..."}</h2>
                 <h3 className="text-2xl font-semibold text-gray-800 mb-8">Admin: {currTask && currTask.admin}</h3>
                 <div className="flex items-center justify-between space-x-4 mb-8">
     <h3 className="text-2xl font-semibold text-gray-800">Subtasks:</h3>

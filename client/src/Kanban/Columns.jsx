@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import Addtask from './Addtask';
 import { useSelector } from 'react-redux';
 import ViewTask from './ViewTask';
+import { useDrag} from 'react-dnd';
+function DraggableTaskButton(props)
+{
+    const id=props.id;
+    const value=props.value;
+    const [viewTask,setViewTask]=useState(false);
+    const [,dragRef]=useDrag(()=>(
+        {
+            type:'Task-Item',
+            item:{id}
 
+        }
+    ));
+    return (
+        <>
+        <button
+            key={id}
+            ref={dragRef}
+            onClick={()=>{   
+                setViewTask(true);   
+            }}
+            className="w-full bg-teal-50/50 text-gray-800 text-left px-4 py-2 rounded-lg hover:bg-teal-100 hover:text-[#0d9488] transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+            {value}
+        </button>
+        {viewTask && <ViewTask show={viewTask} taskId={id} stopShow={()=>setViewTask(false)} />}
+        </>
+    );
+}
 function Columns(props) {
     const type = props.type;
     const tasks = useSelector(state => state.tasks);
     const [task, setTask] = useState(false);
-    const [viewExistingTask,setViewExistingTask]=useState(false);
-    const [taskId,setTaskId]=useState();
-    const [taskDesc,setTaskDesc]=useState();
+    
     
     return (
         <div className="bg-white rounded-xl p-6 shadow-lg min-w-[320px] max-w-[360px] flex flex-col gap-4 mx-auto">
@@ -18,17 +44,7 @@ function Columns(props) {
             </h2>
             <div className="flex flex-col gap-3">
                 {tasks.tasks[type] && Object.entries(tasks.tasks[type]).map(([key, value]) => (
-                    <button
-                        key={key}
-                        onClick={()=>{
-                            setTaskId(key);
-                            setTaskDesc(value);
-                            setViewExistingTask(true);  
-                        }}
-                        className="w-full bg-teal-50/50 text-gray-800 text-left px-4 py-2 rounded-lg hover:bg-teal-100 hover:text-[#0d9488] transition-all duration-200 shadow-sm hover:shadow-md"
-                    >
-                        {value}
-                    </button>
+                    <span key={key}><DraggableTaskButton id={key} value={value}/></span>
                 ))}
             </div>
             <div className="mt-auto">
@@ -42,9 +58,6 @@ function Columns(props) {
                 </button>
             </div>
             <Addtask priority={type} stopShow={() => { setTask(false) }} show={task} />
-            <ViewTask show={viewExistingTask} stopShow={()=>{setViewExistingTask(false)}}
-                      taskDesc={taskDesc} taskId={taskId}
-            />
         </div>
     )
 }
