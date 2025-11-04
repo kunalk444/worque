@@ -6,6 +6,8 @@ const {userRouter}=require("./routes/user.js")
 const {connectDb}=require("./connection.js");
 const cookieParser=require("cookie-parser");
 const {taskRouter}=require("./routes/tasks.js");
+const http=require("http");
+const {Server} = require("socket.io");
 
 app.use(express.json());
 app.use(express.text());
@@ -28,6 +30,16 @@ catch((err)=>{
     console.log("error:",err);
 })
 
-app.listen(5000,()=>{
-    console.log("started");
-})
+const server=http.createServer(app);
+
+const io= new Server(server,{
+    cors:{
+        origin:"http://localhost:5173",
+        credentials:true,
+        methods:['GET','POST']
+    }
+});
+
+server.listen(5000,()=>{
+    console.log("server running at 5000!");
+});
