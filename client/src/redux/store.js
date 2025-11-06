@@ -19,6 +19,7 @@ store.subscribe(()=>{
         user:store.getState().user,
         insideTask:store.getState().insideTask,
     });
+    //console.log(store.getState().insideTask);
 })
 
 export default store;

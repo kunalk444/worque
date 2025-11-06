@@ -27,6 +27,13 @@ const taskSchema=mongoose.Schema({
     },
     completed_subtasks:{
         type:Array,
+    },
+    chats:{
+        type:[
+            {
+                type:Object,
+            }
+        ]
     }
 },
 {

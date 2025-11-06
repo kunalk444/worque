@@ -7,7 +7,7 @@ const insideTaskSlice=createSlice({
     },
     reducers:{
         addData:(state,action)=>{
-            state.taskData=action.payload;
+             state.taskData=action.payload;
         }
     }
 });

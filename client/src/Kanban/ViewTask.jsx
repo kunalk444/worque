@@ -6,37 +6,42 @@ import { useDispatch } from 'react-redux';
 import { addData } from '../slices/insideTask';
 import AssignTasks from './AssignTasks';
 import AddSubTask from './AddSubTask';
+import Chat from './Chat';
 
 function ViewTask(props) {
     const [current, setCurrent] = useState(false);
     const[invited,setInvited]=useState(false);
-    const { stopShow,taskId } = props;
+    const { show,stopShow,taskId } = props;
     const[assignTaskFlag,setAssignTaskFlag]=useState(false);
     const [subtaskFlag,setSubtaskFlag]=useState(false);
+    const [chatFlag,setChatFlag]=useState(false);
     const user = useSelector(state => state.user);
     const currTask=useSelector(state=>state.insideTask.taskData);
     const completed=(currTask && currTask.completed_subtasks)?currTask.completed_subtasks.length:0;
     const total=(currTask && currTask.sub_tasks)?Object.keys(currTask.sub_tasks).length+completed:0;
     const dispatch=useDispatch();
     useEffect(() => {
-        if (props.show) {
+        if (show) {
             (async () => {
                 const arr = await getCurrTask(taskId);
-                arr.isVisible=true;
                 dispatch(addData(arr));
+                localStorage.setItem("insideTaskVisible","true");
+                
             })();
         }
-    }, [props.show,assignTaskFlag,subtaskFlag]);
+    }, [show,dispatch]);
 
-    if (!currTask || !currTask.isVisible) return;
+    const isVisible=localStorage.getItem("insideTaskVisible");
+    if (isVisible=="false") return null;
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center z-50">
             <div className="bg-white rounded-2xl p-12 max-w-6xl w-full shadow-xl relative h-[95vh] overflow-y-auto border-l-4 border-[#0d9488]">
                 <button
                     onClick={()=>{
+                            dispatch(addData({}));
+                            localStorage.setItem("insideTaskVisible","false");
                             stopShow();
-                            dispatch(addData({...currTask,isVisible:false}));
                         }
                     }
                     className="absolute top-8 right-8 text-4xl font-bold text-gray-700 hover:text-gray-900 transition-colors duration-300 bg-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-100"
@@ -82,7 +87,6 @@ function ViewTask(props) {
                                     disabled={user.email!==currTask.sub_tasks[element]}
                                     onChange={async()=>{
                                         const res=await handleCompletedSubtasks(element,currTask._id);
-                                        res.newDoc.isVisible=true;
                                         dispatch(addData(res.newDoc));
                                     }}
                                 />
@@ -112,6 +116,12 @@ function ViewTask(props) {
                     >
                         View Current Members
                     </button>
+                    <button
+                        onClick={()=>setChatFlag(true)}
+                        className="bg-[#0d9488] text-white px-8 py-4 rounded-xl hover:bg-teal-700 transition duration-300 text-xl font-semibold shadow-md hover:shadow-lg max-sm:w-full"
+                    >
+                        Chat Room
+                    </button>
                     {
                         currTask && user.email===currTask.admin && 
                         <button
@@ -133,6 +143,9 @@ function ViewTask(props) {
                 {
                     currTask && subtaskFlag && 
                     <AddSubTask show={subtaskFlag} stopShow={()=>setSubtaskFlag(false)}/>
+                }
+                {
+                    <Chat show={chatFlag} stopShow={()=>setChatFlag(false)}/>
                 }
             </div>
         </div>
