@@ -29,10 +29,10 @@ function ViewTask(props) {
                 
             })();
         }
-    }, [show,dispatch]);
+    }, [show]);
 
     const isVisible=localStorage.getItem("insideTaskVisible");
-    if (isVisible=="false") return null;
+    if (isVisible=="false" || isVisible==null || isVisible==undefined) return null;
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center z-50">

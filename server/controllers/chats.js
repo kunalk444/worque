@@ -14,7 +14,7 @@ function handleChats(server){
 
         socket.on("join-room",({roomId})=>{
             socket.join(roomId);
-            console.log(socket.rooms);    
+                
         });
 
         socket.on("message",async({roomId,message,user})=>{
@@ -28,6 +28,7 @@ function handleChats(server){
                     }
                 }
             );
+            io.to(roomId).emit("send-message-to-client",{[user]:message});
             if(msgSaved)console.log("chat saved in db!");
         });
 
@@ -35,6 +36,19 @@ function handleChats(server){
     });
 
 }
+async function loadChats(taskId) {
+    const arr=await taskModel.findOne({
+            _id:taskId
+        },
+        {
+            chats:1,
+            _id:0,
+        }
+    );
+    if(arr)return {success:true,chats:arr.chats};
+    return {success:false};
+}
 module.exports={
     handleChats,
+    loadChats,
 }
