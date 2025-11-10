@@ -40,7 +40,7 @@ function ViewTask(props) {
                 <button
                     onClick={()=>{
                             dispatch(addData({}));
-                            localStorage.setItem("insideTaskVisible","false");
+                            localStorage.removeItem("insideTaskVisible");
                             stopShow();
                         }
                     }

@@ -28,6 +28,8 @@ const userSchema=mongoose.Schema({
         ],
     }
 });
+
+userSchema.index({current_tasks:1});
 userSchema.pre("save",async function(next){
     const user=this;
     if(!user.isModified("password"))return next();

@@ -4,7 +4,7 @@ const {Router}=require("express");
 const taskRouter=Router();
 const taskModel=require("../models/tasks.js");
 const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks,addSubTasks,handleCompletedSubtask,handleDraggedTask} =require("../controllers/tasks.js")
-const {loadChats} = require("../controllers/chats.js")
+const {loadChats,getMembers} = require("../controllers/chats.js")
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
     const map=new Map();
@@ -58,5 +58,11 @@ taskRouter.post("/retrievechats",async(req,res)=>{
     const obj=await loadChats(taskId); 
     return res.json(obj);
 });
+
+taskRouter.post("/getmembersforchat",async(req,res)=>{
+    const {taskId}=req.body;
+    const arr=await getMembers(taskId);
+    return res.json(arr);
+})
 
 module.exports= {taskRouter};

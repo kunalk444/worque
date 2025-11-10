@@ -1,5 +1,6 @@
 const {Server}=require("socket.io");
 const taskModel=require("../models/tasks.js");
+const userModel=require("../models/user.js");
 function handleChats(server){
     const io=new Server(server,{
         cors:{
@@ -13,6 +14,7 @@ function handleChats(server){
         console.log("new connected!");
 
         socket.on("join-room",({roomId})=>{
+            console.log("joined room!");
             socket.join(roomId);
                 
         });
@@ -24,12 +26,13 @@ function handleChats(server){
                 },
                 {
                     $push:{
-                        chats:{[user]:message},
+                        chats:{user,message},
                     }
                 }
             );
-            io.to(roomId).emit("send-message-to-client",{[user]:message});
-            if(msgSaved)console.log("chat saved in db!");
+            console.log("message received from:",socket.id);
+            io.to(roomId).emit("send-message-to-client",{user,message});
+            
         });
 
 
@@ -48,7 +51,38 @@ async function loadChats(taskId) {
     if(arr)return {success:true,chats:arr.chats};
     return {success:false};
 }
+
+async function getMembers(taskId){
+    const arr=await taskModel.findOne(
+        {
+            _id:taskId
+        },
+        {
+            current_members:1,
+            _id:0,
+        }
+    );
+    if(!arr)return {success:false};
+    const ans=[];
+    for(let i=0;i<arr.current_members.length;i++){
+       
+        const user=await userModel.findOne(
+            {
+                email:arr.current_members[i]
+            },
+            {
+                uname:1,
+                _id:0,
+            }
+        );
+        ans.push(user.uname);
+    }
+    return {success:true,userArray:ans};
+    
+}
+
 module.exports={
     handleChats,
     loadChats,
+    getMembers,
 }

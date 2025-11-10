@@ -24,3 +24,14 @@ export const loadChats=async(taskId)=>{
     return await res.json();
 
 }
+
+export const getMembers=async(taskId)=>{
+    const res=await fetch("http://localhost:5000/tasks/getmembersforchat",{
+        method:'POST',
+        headers:{
+            'Content-type':'application/json'
+        },
+        body:JSON.stringify({taskId})
+    });
+    return await res.json();
+}
