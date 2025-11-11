@@ -27,7 +27,7 @@ function DraggableTaskButton(props)
                     >
             {value}
         </button>
-        <ViewTask show={viewTask} taskId={id} stopShow={()=>setViewTask(false)} />
+        {viewTask && <ViewTask show={viewTask} taskId={id} stopShow={()=>setViewTask(false)} />}
         </>
     );
 }

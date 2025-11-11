@@ -1,7 +1,7 @@
 const express=require("express");
 const taskModel =require("../models/tasks.js");
 const userModel=require("../models/user.js");
-
+const mongoose=require("mongoose");
 async function preloadTaskMetaInfo(email){
     const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
     return obj;
@@ -25,6 +25,12 @@ const assignSubTasks=async(member,subtask,id)=>{
     return {success:false};
 }
 const addSubTasks=async(taskId,desc)=>{
+    console.log("reached!");
+    console.log("before update:");
+    console.log(desc);
+    console.log("Connection state:", mongoose.connection.readyState);
+    console.log(Object.keys(mongoose.models));
+    try{
     const done=await taskModel.findOneAndUpdate(
                 {_id:taskId},
                 {
@@ -35,9 +41,14 @@ const addSubTasks=async(taskId,desc)=>{
                 {
                     new:true
                 }
-            )
+            );
     if(done)return {success:true,newDoc:done};
     return {success:false};
+    }
+    catch(err){
+        console.log(err);
+    }
+    
 }
 const handleCompletedSubtask=async(desc,id)=>{
     const newDoc=await taskModel.findOneAndUpdate(
@@ -60,12 +71,17 @@ const handleCompletedSubtask=async(desc,id)=>{
     
 }
 const handleDraggedTask=async(id,type,email)=>{
+    let time=null;
+    if(type==='today')time=new Date(Date.now() + 24*3600*1000);
+    if(type==='this_week')time=new Date(Date.now() + (7-new Date().getDay())*24*3600*1000);
     const newDoc=await taskModel.findOneAndUpdate(
         {
             _id:id
         },
         {
-            task_priority:type
+            task_priority:type,
+            expiresAt:time,
+            
         }
     );
     if(!newDoc)return {success:false};

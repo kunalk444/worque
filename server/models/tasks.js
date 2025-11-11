@@ -34,7 +34,11 @@ const taskSchema=mongoose.Schema({
                 type:Object,
             }
         ]
+    },
+    expiresAt:{
+        type:Date,
     }
+
 },
 {
     toJSON:{
@@ -49,6 +53,20 @@ const taskSchema=mongoose.Schema({
         }
     }
 });
+
+taskSchema.pre("save",function(next){
+    const task=this;
+    const priority=task.task_priority;
+    if(task.task_priority==="today"){
+        this.expiresAt=new Date(Date.now() + 24*3600*1000);
+    }
+    if(task.task_priority==="this_week"){
+        this.expiresAt=new Date(Date.now() + (7-new Date().getDay())*24*3600*1000);
+    }
+    next();
+});
+
+
 taskSchema.post("save",async function(){
     const task=this;
     const ifEmailAdded=await addMembers(task.invited_members);

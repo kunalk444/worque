@@ -8,6 +8,7 @@ const cookieParser=require("cookie-parser");
 const {taskRouter}=require("./routes/tasks.js");
 const http=require("http");
 const {handleChats}=require("./controllers/chats.js");
+const mongoose=require("mongoose");
 
 app.use(express.json());
 app.use(express.text());
@@ -28,7 +29,16 @@ then(()=>{
 }).
 catch((err)=>{
     console.log("error:",err);
-})
+});
+
+console.log("mongoose connected at:",new Date().toString());
+
+mongoose.connection.on("connected",()=>console.log("connected!"));
+
+mongoose.connection.on("disconnected",()=>console.log("disconnected!"));
+
+mongoose.connection.on("error",(err)=>console.log(err));
+
 
 const server=http.createServer(app);
 
@@ -37,3 +47,7 @@ handleChats(server);
 server.listen(5000,()=>{
     console.log("server running at 5000!");
 });
+
+
+const {handleCronJobs}=require("./controllers/cronJobs.js");
+//handleCronJobs();

@@ -38,7 +38,6 @@ taskRouter.post("/assignsubtasks",async(req,res)=>{
 });
 taskRouter.post("/addsubtasks",async(req,res)=>{
     const {taskId,desc}=req.body;
-    console.log(taskId,desc);
     const subRes=await addSubTasks(taskId,desc);
     return res.json(subRes); 
 });

@@ -26,13 +26,14 @@ function ViewTask(props) {
                 const arr = await getCurrTask(taskId);
                 dispatch(addData(arr));
                 localStorage.setItem("insideTaskVisible","true");
+                console.log("clicked");
                 
             })();
         }
     }, [show]);
 
     const isVisible=localStorage.getItem("insideTaskVisible");
-    if (isVisible=="false" || isVisible==null || isVisible==undefined) return null;
+    if (!isVisible) return null;
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center z-50">
