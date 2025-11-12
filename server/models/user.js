@@ -24,9 +24,22 @@ const userSchema=mongoose.Schema({
         type:[
             {
                 type:mongoose.Schema.Types.ObjectId,
+                ref:"tasks"
             }
         ],
-    }
+    },
+    notifications:[
+        {
+            notiftype:String,
+            taskId:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"archivedtasks",
+            },
+            desc:String,
+            timeStamp:Date,
+        }
+    ]
+
 });
 
 userSchema.index({current_tasks:1});

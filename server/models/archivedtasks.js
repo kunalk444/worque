@@ -1,5 +1,5 @@
 const mongoose=require("mongoose");
-
+const userModel=require("../models/user.js");
 const archiveSchema=mongoose.Schema({
      task_priority:{
         type:String,
@@ -51,12 +51,33 @@ const archiveSchema=mongoose.Schema({
         }
     }
 });
+archiveSchema.pre("save",async function(next){
+    this.expiresAt=new Date(Date.now()+24*3600*1000);
+    next();
+})
+archiveSchema.post("save",async function(){
+    const task=this;
+    const admin=task.admin;
+    const obj={
+        notiftype:"archived_task",
+        taskId:task._id,
+        desc:`Task :${task.task_description} is archived! Click to bring it back`,
+        timeStamp:Date.now(),
+    }
+    const res=await userModel.findOneAndUpdate(
+        {
+            email:admin
+        },
+        {
+            $push:{
+                notifications:obj,
+            }
+        }
+    );
 
-// archiveSchema.post("save",async()=>{
 
-// });
+});
 
 const archiveModel=mongoose.model("archivedtasks",archiveSchema);
 
-console.log("model called at:",new Date().toString());
 module.exports=archiveModel;

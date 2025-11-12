@@ -19,17 +19,27 @@ const assignSubTasks=async(member,subtask,id)=>{
                         }},
                         {new:true}
                     );
+    const notifyUser=await userModel.findOneAndUpdate(
+        {
+            email:member,
+        },
+        {
+            $push:{
+                    notifications:{
+                        notiftype:"assigned_subtask",
+                        taskId:new mongoose.Types.ObjectId(id),
+                        desc:`You've been assignd a subtask for: ${done.task_description}!Click to check it out`,
+                        timeStamp:Date.now(),
+                    }
+                }
+        }
+    )
     if(done){
         return {success:true,newData:done};
     }
     return {success:false};
 }
 const addSubTasks=async(taskId,desc)=>{
-    console.log("reached!");
-    console.log("before update:");
-    console.log(desc);
-    console.log("Connection state:", mongoose.connection.readyState);
-    console.log(Object.keys(mongoose.models));
     try{
     const done=await taskModel.findOneAndUpdate(
                 {_id:taskId},
@@ -67,7 +77,8 @@ const handleCompletedSubtask=async(desc,id)=>{
                     new:true
                 }
             );
-    if(newDoc)return {success:true,newDoc};
+    const ifAllTasksCompleted=(newDoc.completed_subtasks.length>=1 && newDoc.sub_tasks.size==0);
+    if(newDoc)return {success:true,newDoc,ifAllTasksCompleted};
     
 }
 const handleDraggedTask=async(id,type,email)=>{
@@ -88,6 +99,11 @@ const handleDraggedTask=async(id,type,email)=>{
     return {success:true,newDoc};
     
 }
+const deleteTask=async(taskId)=>{
+    const res=await taskModel.deleteOne({_id:taskId});
+    if(res)return {success:true};
+    return {success:false};
+}
 module.exports={
     preloadTaskMetaInfo,
     loadTaskInfo,
@@ -95,4 +111,5 @@ module.exports={
     addSubTasks,
     handleCompletedSubtask,
     handleDraggedTask,
+    deleteTask
 }

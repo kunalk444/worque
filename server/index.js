@@ -31,8 +31,6 @@ catch((err)=>{
     console.log("error:",err);
 });
 
-console.log("mongoose connected at:",new Date().toString());
-
 mongoose.connection.on("connected",()=>console.log("connected!"));
 
 mongoose.connection.on("disconnected",()=>console.log("disconnected!"));
@@ -50,4 +48,4 @@ server.listen(5000,()=>{
 
 
 const {handleCronJobs}=require("./controllers/cronJobs.js");
-//handleCronJobs();
+handleCronJobs();
