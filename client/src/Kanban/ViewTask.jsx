@@ -7,6 +7,7 @@ import { addData } from '../slices/insideTask';
 import AssignTasks from './AssignTasks';
 import AddSubTask from './AddSubTask';
 import Chat from './Chat';
+import CompletedAllTasks from './CompletedAllTasks';
 
 function ViewTask(props) {
     const [current, setCurrent] = useState(false);
@@ -15,6 +16,7 @@ function ViewTask(props) {
     const[assignTaskFlag,setAssignTaskFlag]=useState(false);
     const [subtaskFlag,setSubtaskFlag]=useState(false);
     const [chatFlag,setChatFlag]=useState(false);
+    const [completedAllTasks,setCompletedAllTasks]=useState(false);
     const user = useSelector(state => state.user);
     const currTask=useSelector(state=>state.insideTask.taskData);
     const completed=(currTask && currTask.completed_subtasks)?currTask.completed_subtasks.length:0;
@@ -89,6 +91,7 @@ function ViewTask(props) {
                                     onChange={async()=>{
                                         const res=await handleCompletedSubtasks(element,currTask._id);
                                         dispatch(addData(res.newDoc));
+                                        if(res.ifAllTasksCompleted)setCompletedAllTasks(true);
                                     }}
                                 />
                                 <span className="text-xl text-gray-800 font-medium">{element}</span>
@@ -147,6 +150,14 @@ function ViewTask(props) {
                 }
                 {
                     <Chat show={chatFlag} stopShow={()=>setChatFlag(false)}/>
+                }
+                {
+                    completedAllTasks && 
+                    <CompletedAllTasks show={completedAllTasks}
+                        stopShow={()=>setCompletedAllTasks(false)}
+                        taskId={currTask._id}
+                    />
+
                 }
             </div>
         </div>

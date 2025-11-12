@@ -18,7 +18,7 @@ const store=configureStore({
 
 store.subscribe(()=>{
     saveState({
-        user:store.getState().user,
+        user:{...store.getState().user,timestamp:Date.now()},
         insideTask:store.getState().insideTask,
     });
     //console.log(store.getState().insideTask);
