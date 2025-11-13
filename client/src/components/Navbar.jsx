@@ -48,6 +48,9 @@ const Navbar = ({ isLoggedIn, userName }) => {
                 </div>
             ) : (
                 <div className="flex items-center gap-8">
+                    <Link to='/notifications'>
+                        Notifications
+                    </Link>
                     <Link 
                         to="/pendingrequests"
                         className="text-white text-sm font-medium hover:text-teal-100 transition-all duration-200 relative group"

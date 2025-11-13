@@ -76,10 +76,28 @@ const handlePendingRequests=async(userId,taskId,type)=>{
     
     
 }
+
+const getNotifs=async(userId)=>{
+    console.log(userId);
+    const data=await userModel.findOne(
+        {
+            _id:userId,
+        },
+        {
+            notifications:1,
+            _id:0,
+        }
+    );
+    
+    if(data)return {success:true,notifications:data.notifications};
+    return {success:false};
+}
+
 module.exports={
     handleSignup,
     handleLogin,
     handleGoogleClient,
     loadPendingRequests,
     handlePendingRequests,
+    getNotifs
 }

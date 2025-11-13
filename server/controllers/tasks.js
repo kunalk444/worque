@@ -2,6 +2,7 @@ const express=require("express");
 const taskModel =require("../models/tasks.js");
 const userModel=require("../models/user.js");
 const mongoose=require("mongoose");
+const archiveModel = require("../models/archivedtasks.js");
 async function preloadTaskMetaInfo(email){
     const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
     return obj;
@@ -104,6 +105,19 @@ const deleteTask=async(taskId)=>{
     if(res)return {success:true};
     return {success:false};
 }
+
+const unarchiveTask=async(taskId)=>{
+    console.log(taskId);
+    const step1=await archiveModel.findOneAndDelete({_id:taskId});
+    if(step1){
+        obj=step1.toObject();
+        const step2=await taskModel.create(obj);
+        if(step2)return {success:true};
+        else {return {success:false};}
+    }
+    return {success:false};
+}
+
 module.exports={
     preloadTaskMetaInfo,
     loadTaskInfo,
@@ -111,5 +125,6 @@ module.exports={
     addSubTasks,
     handleCompletedSubtask,
     handleDraggedTask,
-    deleteTask
+    deleteTask,
+    unarchiveTask
 }

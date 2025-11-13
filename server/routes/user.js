@@ -1,5 +1,5 @@
 const {Router}=require("express");
-const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests,handlePendingRequests}=require("../controllers/user.js")
+const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests,handlePendingRequests,getNotifs}=require("../controllers/user.js")
 const {createJwtToken} = require("../services/auth.js")
 const {OAuth2Client} = require("google-auth-library");
 const client= new OAuth2Client(process.env.CLIENT_ID);
@@ -91,4 +91,12 @@ userRouter.post("/handlependingrequests",async(req,res)=>{
     if(obj.success)return res.json(obj);
     return res.json({success:false});
 })
+
+userRouter.post("/notifications",async(req,res)=>{
+    const {userId}=req.body;
+    const data=await getNotifs(userId);
+    return res.json(data);
+
+})
+
 module.exports={userRouter};

@@ -14,6 +14,17 @@ function handleCronJobs(){
             const archived=await archiveModel.create(doc.toObject());
 
             const deleteTask=await taskModel.deleteOne({_id:doc._id});
+
+            const del=await userModel.updateMany(
+                {
+
+                },
+                {
+                    $pull:{
+                        current_tasks:doc._id,
+                    }
+                }
+            );
         }
         console.log("cron running!");
         }

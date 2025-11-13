@@ -1,16 +1,26 @@
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://127.0.0.1:27017/worque");
 const archiveModel=require("./models/archivedtasks.js");
+const userModel=require("./models/user.js");
 
 (async () => {
   try {
-    const res = await archiveModel.create({
-      task_priority: 'today',
-      task_description: 'sdfg',
-      admin: 'kanjwanikunal45@gmail.com',
-      expiresAt:new Date(Date.now()+24*3600*1000)
-    });
-    console.log("done:", res);
+    const res = await archiveModel.find({},{_id:1});
+
+    for(const obj of res){
+      const id=obj._id;
+      const del=await userModel.updateMany(
+        {
+
+        },
+        {
+          $pull:{
+            current_tasks:id,
+          }
+        }
+      );
+      console.log(del);
+    }
   } catch (err) {
     console.error("failed:", err);
   }
