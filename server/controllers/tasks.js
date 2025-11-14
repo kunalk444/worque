@@ -106,14 +106,28 @@ const deleteTask=async(taskId)=>{
     return {success:false};
 }
 
-const unarchiveTask=async(taskId)=>{
+const unarchiveTask=async(taskId,notifId,adminId)=>{
     console.log(taskId);
+    console.log(adminId);
+    console.log(notifId);
     const step1=await archiveModel.findOneAndDelete({_id:taskId});
     if(step1){
         obj=step1.toObject();
         const step2=await taskModel.create(obj);
-        if(step2)return {success:true};
-        else {return {success:false};}
+        if(!step2)return {success:false};
+        const step3=await userModel.findOneAndUpdate(
+            {
+                _id:adminId
+            },
+            {
+                $pull:{
+                    notifications:{
+                        _id:notifId,
+                    }
+                }
+            }
+        );
+        if(step3)return {success:true};
     }
     return {success:false};
 }

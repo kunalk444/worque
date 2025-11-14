@@ -28,7 +28,7 @@ const handleLogin=async(uemail,password)=>{
                                 .update(password)
                                 .digest("hex");
     if(existingHashedPassword===newHashedPassword){
-        return ({uname:user.uname,password:user.password,email:user.email,id:user._id});
+        return ({uname:user.uname,email:user.email,id:user._id});
     }
     return null;
 }
@@ -78,18 +78,24 @@ const handlePendingRequests=async(userId,taskId,type)=>{
 }
 
 const getNotifs=async(userId)=>{
-    console.log(userId);
-    const data=await userModel.findOne(
-        {
-            _id:userId,
-        },
-        {
-            notifications:1,
-            _id:0,
-        }
-    );
-    
-    if(data)return {success:true,notifications:data.notifications};
+    if(userId){
+        const data=await userModel.findOne(
+            {
+                _id:userId,
+            },
+            {
+                notifications:1,
+                _id:1,
+            }
+        );
+        if(data)return {success:true,notifications:data.notifications};
+    }
+    return {success:false};
+}
+
+const verifyUser=async(id)=>{
+    const doc=await userModel.findOne({_id:id});
+    if(doc)return {success:true};
     return {success:false};
 }
 
@@ -99,5 +105,6 @@ module.exports={
     handleGoogleClient,
     loadPendingRequests,
     handlePendingRequests,
-    getNotifs
+    getNotifs,
+    verifyUser,
 }

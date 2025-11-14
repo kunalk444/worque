@@ -1,6 +1,7 @@
 const cron=require("node-cron");
 const taskModel=require("../models/tasks.js");
 const archiveModel=require("../models/archivedtasks.js");
+
 function handleCronJobs(){
     cron.schedule("*/5 * * * *",async()=>{
         try{
@@ -17,7 +18,7 @@ function handleCronJobs(){
 
             const del=await userModel.updateMany(
                 {
-
+                    current_tasks:doc._id,
                 },
                 {
                     $pull:{

@@ -1,7 +1,9 @@
 const {Router}=require("express");
-const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests,handlePendingRequests,getNotifs}=require("../controllers/user.js")
-const {createJwtToken} = require("../services/auth.js")
+const {handleSignup,handleLogin,handleGoogleClient,loadPendingRequests,handlePendingRequests,getNotifs,verifyUser}=require("../controllers/user.js")
+const {createJwtToken,verifyToken} = require("../services/auth.js")
 const {OAuth2Client} = require("google-auth-library");
+const userModel=require("../models/user.js");
+const { get } = require("mongoose");
 const client= new OAuth2Client(process.env.CLIENT_ID);
 const userRouter=Router();
 userRouter.post("/signup",async(req,res)=>{
@@ -12,7 +14,7 @@ userRouter.post("/signup",async(req,res)=>{
      const cookieToken=createJwtToken(token);
      res.cookie("jwt",cookieToken,{
         httpOnly:true,
-        maxAge:24*24*60*100,
+        maxAge:86400000*2,
         sameSite:"Strict",
         secure:false,
 
@@ -31,7 +33,7 @@ userRouter.post("/login",async(req,res)=>{
         const cookieToken=createJwtToken(existingUser);
         res.cookie("jwt",cookieToken,{
             httpOnly:true,
-            maxAge:24*24*60*100,
+            maxAge:86400000*2,
             sameSite:"Strict",
             secure:false,
         });
@@ -66,7 +68,7 @@ userRouter.post("/googleUser",async(req,res)=>{
             const cookieToken=createJwtToken({uname:data.name,email:data.email,id:user._id});
             res.cookie("jwt",cookieToken,{
             httpOnly:true,
-            maxAge:24*60*60*100,
+            maxAge:86400000*2,
             sameSite:"Strict",
             secure:false,
             })
@@ -98,5 +100,38 @@ userRouter.post("/notifications",async(req,res)=>{
     return res.json(data);
 
 })
+
+userRouter.post("/userauth",async(req,res)=>{
+    const verify=verifyToken(req.cookies.jwt);
+    if(verify.success){
+        const getUser=await verifyUser(verify.userObj.id);
+        if(getUser.success){
+            return res.json({success:true,user:verify.userObj});
+        }
+    }
+    return res.json({success:false});
+})
+
+userRouter.post("/removenotif",async(req,res)=>{
+  const{notifId,userId}=req.body;  
+  if(userId && notifId){
+        const ans=await userModel.findOneAndUpdate(
+            {
+                _id:userId,
+            },
+            {
+                $pull:{
+                    notifications:{
+                                _id:notifId,
+                                }
+                    }
+            }
+            );
+        if(ans)return res.json({success:true});
+    }
+   
+    return res.json({success:false});
+})
+
 
 module.exports={userRouter};

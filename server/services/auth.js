@@ -12,7 +12,8 @@ const verifyToken=(token)=>{
     try{
     if(token===undefined)return null;
     const userObj=jwt.verify(token,secret);
-    return userObj;
+    if(userObj)return {success:true,userObj};
+    return {succes:false};
     }catch(err){
         console.log("error:",err)
         return null;
