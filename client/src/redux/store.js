@@ -21,11 +21,9 @@ const store=configureStore({
 
 store.subscribe(()=>{
     saveState({
-        user:{...store.getState().user,timestamp:Date.now()},
         insideTask:store.getState().insideTask,
         notifications:store.getState().notifications
     });
-    //console.log(store.getState().insideTask);
 })
 
 export default store;

@@ -1,10 +1,26 @@
+import store from "./src/redux/store";
+import { saveData } from "./src/slices/userSlice";
+
 export const loadState=()=>{
     try{
+         
+        (async()=>
+            {
+                const res=await fetch("http://localhost:5000/user/userauth",{
+                    method:'POST',
+                    credentials:'include',
+                    headers:{
+                    'Content-type':'application/json',
+                    }
+                });
+                const userData=await res.json();
+                const {uname,email,id}=userData.user;
+                if(userData.success)store.dispatch(saveData({uname,email,id}));
+            }
+        )();
         const persistedDataString=localStorage.getItem("persistedState");
         if(persistedDataString==null)return undefined;
         const persistedData=JSON.parse(persistedDataString);
-        const timestamp=persistedData.user.timestamp;
-        if((timestamp+(24*3600*1000))<Date.now())return {...persistedData,user:{}};
         return persistedData;
     }catch{
         console.warn("failed to fetch persisted data!");
