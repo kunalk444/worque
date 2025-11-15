@@ -28,3 +28,19 @@ export const loadSavedTasks=async(email)=>{
     return obj;
     
 }
+
+export async function deleteTasks(taskId) {
+    try {
+        const res = await fetch("http://localhost:5000/tasks/deletetask", {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({ taskId }),
+            credentials: 'include',
+        });
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+    }
+}

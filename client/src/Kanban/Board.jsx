@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect,  } from 'react'
 import Columns from './Columns'
 import { useDispatch, useSelector } from 'react-redux'
 import PreLogin from '../components/PreLogin';
@@ -22,10 +22,7 @@ function DroppableColumn(props){
               const data=await loadSavedTasks(user.email);
               dispatch(saveTasksInRedux(data));
             }
-
-            
-        }
-
+        },
     }));
   return(
       <div ref={dropRef}>
@@ -37,23 +34,21 @@ function Board() {
   const dispatch=useDispatch();
   const user=useSelector(state=>state.user);
   const priority=["today","this_week","later"];
-  if(!user)return <div><PreLogin /></div>
-  let obj={};
-  (async()=>{
-    obj=await loadSavedTasks(user.email);
-    dispatch(saveTasksInRedux(obj));
-  })();
   
+  useEffect(()=>{
+    (async()=>{
+      let obj=await loadSavedTasks(user.email);
+      dispatch(saveTasksInRedux(obj));
+    })();
+    },[]);
   return (
-    <div className='board'>
-        <DndProvider backend={HTML5Backend}>
-          {
-            priority && priority.map((element,index)=>{
-              return <div key={index}><DroppableColumn type={element} /></div>
-            })
-          }
-        </DndProvider>
-    </div>
+      <div className='board'>
+            {
+              priority && priority.map((element,index)=>{
+                return <div key={index}><DroppableColumn type={element} /></div>
+              })
+            }
+      </div>
   )
 }
 
