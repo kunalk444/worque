@@ -10,7 +10,7 @@ const createJwtToken=(user)=>{
 }
 const verifyToken=(token)=>{
     try{
-    if(token===undefined)return null;
+    if(token===undefined)return {success:false};
     const userObj=jwt.verify(token,secret);
     if(userObj)return {success:true,userObj};
     return {succes:false};

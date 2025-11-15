@@ -19,7 +19,7 @@ const userModel=require("./models/user.js");
           }
         }
       );
-      console.log(del);
+    
     }
   } catch (err) {
     console.error("failed:", err);

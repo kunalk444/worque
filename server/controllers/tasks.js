@@ -3,6 +3,7 @@ const taskModel =require("../models/tasks.js");
 const userModel=require("../models/user.js");
 const mongoose=require("mongoose");
 const archiveModel = require("../models/archivedtasks.js");
+const pendingRequestsModel = require("../models/pendingrequests.js");
 async function preloadTaskMetaInfo(email){
     const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
     return obj;
@@ -102,14 +103,37 @@ const handleDraggedTask=async(id,type,email)=>{
 }
 const deleteTask=async(taskId)=>{
     const res=await taskModel.deleteOne({_id:taskId});
-    if(res)return {success:true};
+
+     const del=await userModel.updateMany(
+        {
+            current_tasks:new mongoose.Types.ObjectId(taskId), 
+        },
+        {
+            $pull:{
+                current_tasks:new mongoose.Types.ObjectId(taskId),
+                notifications:{
+                    'taskId':new mongoose.Types.ObjectId(taskId), 
+                }
+            }
+        }
+    );
+
+    const delFromPending=await pendingRequestsModel.updateMany(
+        {
+            requests:new mongoose.Types.ObjectId(taskId),
+        },
+        {
+            $pull:{
+                requests:new mongoose.Types.ObjectId(taskId),
+            }
+        }
+    )
+
+    if(res && del)return {success:true};
     return {success:false};
 }
 
 const unarchiveTask=async(taskId,notifId,adminId)=>{
-    console.log(taskId);
-    console.log(adminId);
-    console.log(notifId);
     const step1=await archiveModel.findOneAndDelete({_id:taskId});
     if(step1){
         obj=step1.toObject();

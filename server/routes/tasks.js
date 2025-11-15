@@ -27,7 +27,6 @@ taskRouter.post("/preloadtasks",async(req,res)=>{
 });
 
 taskRouter.post("/gettasks",async(req,res)=>{
-    console.log(req.cookies);
     const {taskId}=req.body;
     const obj=await loadTaskInfo(taskId);
     return res.json(obj);

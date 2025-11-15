@@ -37,7 +37,6 @@ userRouter.post("/login",async(req,res)=>{
             sameSite:"Strict",
             secure:false,
         });
-        console.log(existingUser.id);
         return res.status(201).json({success:true,message:"login successful!",
             user:{uname:existingUser.uname,email:existingUser.email,id:existingUser.id}});
 
@@ -64,7 +63,6 @@ userRouter.post("/googleUser",async(req,res)=>{
         const data=await ticket.getPayload();
         if(data.email_verified){
             const user=await handleGoogleClient(data.name,data.email);
-            console.log(user._id);
             const cookieToken=createJwtToken({uname:data.name,email:data.email,id:user._id});
             res.cookie("jwt",cookieToken,{
             httpOnly:true,

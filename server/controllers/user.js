@@ -41,10 +41,9 @@ const handleGoogleClient=async(name,uemail)=>{
             uname:name,
             email:uemail
         });
-        console.log(newUser);
         return newUser;
     }
-    console.log(user);
+    
     return user;
     
 
@@ -56,6 +55,7 @@ const loadPendingRequests=async(email)=>{
     const obj={};
     for(const ele of arr.pending_requests){
         const task=await taskModel.findOne({_id:ele},{task_priority:1,task_description:1,admin:1});
+        if(!task)continue;
         obj[ele]=[task.task_description,task.task_priority,task.admin];
     }
 
@@ -66,7 +66,6 @@ const handlePendingRequests=async(userId,taskId,type)=>{
         const obj=await userModel.updateOne({_id:userId},{$pull:{pending_requests:new mongoose.Types.ObjectId(taskId)}});
         if(type=="accept"){
             const taskAddedInUser=await userModel.findByIdAndUpdate(userId,{$addToSet:{current_tasks:new mongoose.Types.ObjectId(taskId)}},{new:true});
-            console.log(taskAddedInUser);
             const addInTaskDb=await taskModel.findByIdAndUpdate(taskId,{$addToSet:{current_members:taskAddedInUser.email}});
         }
         return {success:true};

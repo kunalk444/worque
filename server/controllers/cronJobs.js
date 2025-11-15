@@ -16,19 +16,34 @@ function handleCronJobs(){
 
             const deleteTask=await taskModel.deleteOne({_id:doc._id});
 
-            const del=await userModel.updateMany(
-                {
-                    current_tasks:doc._id,
-                },
-                {
-                    $pull:{
-                        current_tasks:doc._id,
+           const taskId=doc._id;
+           const del=await userModel.updateMany(
+            {
+                current_tasks:new mongoose.Types.ObjectId(taskId), 
+            },
+            {
+                $pull:{
+                    current_tasks:new mongoose.Types.ObjectId(taskId),
+                    notifications:{
+                        'taskId':new mongoose.Types.ObjectId(taskId), 
                     }
                 }
-            );
-        }
+            }
+        );
+
+        const delFromPending=await pendingRequestsModel.updateMany(
+            {
+                requests:new mongoose.Types.ObjectId(taskId),
+            },
+            {
+                $pull:{
+                    requests:new mongoose.Types.ObjectId(taskId),
+                }
+            }
+        )
+    }
         console.log("cron running!");
-        }
+    }
         catch{
             console.error("some problem in cron!");
         }
