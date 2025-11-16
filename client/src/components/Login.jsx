@@ -4,7 +4,6 @@ import { saveData } from '../slices/userSlice';
 import '../App.css';
 import { GoogleLogin } from '@react-oauth/google';
 
-
 function Login({ show, onClose }) {
   const [pass, setPass] = useState("");
   const [email, setEmail] = useState("");
@@ -29,39 +28,39 @@ function Login({ show, onClose }) {
     }
     if (data.success) {
       console.log(data.id);
-      dispatch(saveData({ uname: data.user.uname,email: data.user.email,isLoggedIn: true,id:data.user.id}));
+      dispatch(saveData({ uname: data.user.uname, email: data.user.email, isLoggedIn: true, id: data.user.id }));
       onClose();
       console.log(data.user.uname);
     }
   }
 
-    const verifyGoogleLogin = async (tokenId) => {
-      const data = await fetch("http://localhost:5000/user/googleUser", {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({ token: tokenId })
-      });
-      const res = await data.json();
-      if (res.success) {
-        dispatch(saveData({ uname:res.uname,email:res.email,isLoggedIn:true,id:res.id}));
-        onClose();
-      }
+  const verifyGoogleLogin = async (tokenId) => {
+    const data = await fetch("http://localhost:5000/user/googleUser", {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({ token: tokenId })
+    });
+    const res = await data.json();
+    if (res.success) {
+      dispatch(saveData({ uname: res.uname, email: res.email, isLoggedIn: true, id: res.id }));
+      onClose();
     }
+  }
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[#0f172a]/70 backdrop-blur-sm flex items-center justify-center z-[100]">
       {flag && (
-        <div className="absolute top-20 border border-white text-white bg-[#7c3aed]/80 px-6 py-2 rounded-lg shadow-lg font-medium animate-pulse">
-          Wrong Email or Password!
+        <div className="absolute top-16 border border-red-500 text-white bg-red-600 px-6 py-2 rounded-lg shadow-lg font-medium z-[120]">
+          Wrong Email or Password
         </div>
       )}
 
-      <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative transition-transform transform scale-100 hover:scale-[1.01] duration-300">
+      <div className="relative bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl z-[110]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -70,46 +69,49 @@ function Login({ show, onClose }) {
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-medium transition-colors duration-200"
+            className="absolute top-3 right-3 text-gray-700 hover:text-red-600 text-lg font-medium transition-colors duration-200 z-[120]"
           >
-            ✕
+            X
           </button>
 
-          <h2 className="text-2xl font-bold text-center text-[#0d9488] mb-6 tracking-tight">
-            Login to your Worque account
+          <h2 className="text-xl font-bold text-center text-gray-900 mb-5 tracking-tight">
+            Login to Worque
           </h2>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <input
               type="text"
               value={email}
               required
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-teal-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
+              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-gray-900 placeholder-gray-500"
               placeholder="Email"
             />
+
             <input
               type="password"
               value={pass}
               required
               onChange={(e) => setPass(e.target.value)}
-              className="w-full border border-teal-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0d9488] transition bg-teal-50/50 text-gray-800 text-base placeholder-gray-500"
+              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-gray-900 placeholder-gray-500"
               placeholder="Password"
             />
+
             <button
               type="submit"
-              className="w-full bg-[#7c3aed] text-white py-3 rounded-lg hover:bg-[#6d28d9] transition-all duration-300 font-medium text-base shadow-md hover:shadow-lg"
+              className="w-full bg-emerald-700 text-white py-2 rounded-lg hover:bg-emerald-800 transition-all duration-300 font-medium shadow-md"
             >
               Login
             </button>
-              <div className="flex justify-center">
-                  <GoogleLogin
-                     onSuccess={(res) => {
-                      verifyGoogleLogin(res.credential);
-                  }}
-                  onError={() => {
-                    console.log("login failed!");
-                  }}
+
+            <div className="flex justify-center mt-3">
+              <GoogleLogin
+                onSuccess={(res) => {
+                  verifyGoogleLogin(res.credential);
+                }}
+                onError={() => {
+                  console.log("login failed!");
+                }}
               />
             </div>
           </div>
