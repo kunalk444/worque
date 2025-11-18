@@ -1,6 +1,9 @@
 const {Server}=require("socket.io");
 const taskModel=require("../models/tasks.js");
 const userModel=require("../models/user.js");
+const fs=require("fs").promises;
+const path = require("path");
+
 function handleChats(server){
     const io=new Server(server,{
         cors:{
@@ -28,12 +31,12 @@ function handleChats(server){
                 },
                 {
                     $push:{
-                        chats:{user,message},
+                        chats:{user,message,time:new Date().toLocaleTimeString()},
                     }
                 }
             );
             console.log("message received from:",socket.id);
-            io.to(roomId).emit("send-message-to-client",{user,message});
+            io.to(roomId).emit("send-message-to-client",{user,message,time:new Date().toLocaleTimeString()});
             
         });
 
@@ -45,11 +48,36 @@ function handleChats(server){
             io.to(roomId).emit("done-typing",);
         });
 
-        socket.on("voice-message",({roomId,name,audio})=>{
-            
-        })
-    });
+        socket.on("voice-message",async({roomId,name,audio})=>{
+            const buffer =  Buffer.from(audio);
+        
+            const filename=`${Date.now()}-${name.replace(/\s+/g,"_")}.webm`;
 
+            await fs.writeFile(path.join(__dirname,"../uploads/voices/",filename),buffer);
+    
+            const url=`http://localhost:5000/voices/${filename}`;
+
+            const saveInDb = await taskModel.findOneAndUpdate(
+                {
+                    _id:roomId,
+                },
+                {
+                    $push:{
+                        chats:{user:name,type:"audio",url,time:new Date().toLocaleTimeString()}
+                    }
+                }
+            );
+
+            io.to(roomId).emit("voice-message-client",{
+                user:name,
+                type:"audio",
+                url,
+                time:new Date().toLocaleTimeString()
+            });
+
+        });
+    });
+    
 }
 async function loadChats(taskId) {
     const arr=await taskModel.findOne({

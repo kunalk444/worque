@@ -8,6 +8,7 @@ const cookieParser=require("cookie-parser");
 const {taskRouter}=require("./routes/tasks.js");
 const http=require("http");
 const {handleChats}=require("./controllers/chats.js");
+const path=require("path");
 const mongoose=require("mongoose");
 
 app.use(express.json());
@@ -22,6 +23,8 @@ app.use(cors(
 app.use("/auth",authRouter);
 app.use("/user",userRouter);
 app.use("/tasks",taskRouter);
+
+app.use("/voices",express.static(path.join(__dirname,"uploads/voices")));
 
 connectDb("mongodb://127.0.0.1:27017/worque").
 then(()=>{
