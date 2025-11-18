@@ -16,6 +16,8 @@ function handleChats(server){
         socket.on("join-room",({roomId})=>{
             console.log("joined room!");
             socket.join(roomId);
+            const online=io.sockets.adapter.rooms.get(roomId).size;
+            io.to(roomId).emit("online-members",online);
                 
         });
 
@@ -35,7 +37,17 @@ function handleChats(server){
             
         });
 
+        socket.on("is-typing",({name,email,roomId})=>{
+            io.to(roomId).emit("is-typing",{name,email});
+        });
 
+        socket.on("done-typing",({roomId})=>{
+            io.to(roomId).emit("done-typing",);
+        });
+
+        socket.on("voice-message",({roomId,name,audio})=>{
+            
+        })
     });
 
 }

@@ -1,11 +1,11 @@
 import React from 'react';
-
+import { createPortal } from 'react-dom';
 function Members(props) {
   if (!props.show) return;
   const { stopShow, type, members } = props;
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center z-50">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex justify-center items-center z-[200000]">
       <div className="bg-white rounded-2xl p-10 max-w-3xl w-full shadow-xl relative h-[70vh] overflow-y-auto border-l-4 border-[#0d9488]">
         <button
           onClick={stopShow}
@@ -24,7 +24,7 @@ function Members(props) {
           })
         }
       </div>
-    </div>
+    </div>,document.body
   );
 }
 

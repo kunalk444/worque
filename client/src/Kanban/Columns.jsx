@@ -3,8 +3,7 @@ import Addtask from './Addtask';
 import { useSelector, useDispatch } from 'react-redux';
 import ViewTask from './ViewTask';
 import { useDrag, useDrop } from 'react-dnd';
-import { loadSavedTasks } from '../boardHelper';
-import { deleteTasks } from '../boardHelper';
+import { loadSavedTasks, deleteTasks } from '../boardHelper';
 import { saveTasksInRedux } from '../slices/taskSlice';
 
 function DraggableTaskButton(props) {
@@ -14,6 +13,7 @@ function DraggableTaskButton(props) {
     const [delWidget, setDelWidget] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
+
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'Task-Item',
         item: { id },
@@ -21,6 +21,7 @@ function DraggableTaskButton(props) {
             isDragging: monitor.isDragging(),
         })
     }));
+
     const [{ hasDropped }, delRef] = useDrop(() => ({
         accept: 'Task-Item',
         drop: async (droppedTask) => {
@@ -47,22 +48,21 @@ function DraggableTaskButton(props) {
     return (
         <>
             <button
-                key={id}
                 ref={dragRef}
-                onClick={() => {
-                    setViewTask(true);
-                }}
-                className="w-full bg-teal-50/80 text-gray-800 text-left px-5 py-3 rounded-xl hover:bg-teal-100 hover:text-[#0d9488] transition-all duration-300 shadow-md hover:shadow-lg font-medium text-base border border-teal-200/50"
+                onClick={() => setViewTask(true)}
+                className="w-full bg-[#ffffff] text-[#0f172a] text-left px-5 py-4 rounded-xl hover:bg-[#14b8a6]/10 hover:text-[#14b8a6] hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base border border-[#14b8a6]/20 cursor-move"
             >
                 {value}
             </button>
+
             {viewTask && <ViewTask show={viewTask} taskId={id} stopShow={() => setViewTask(false)} />}
+
             {delWidget && (
                 <div
                     ref={delRef}
-                    className="fixed top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-100 text-red-800 px-8 py-4 rounded-xl shadow-2xl font-semibold text-lg z-50 border border-red-200"
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#ef4444] text-white px-10 py-6 rounded-2xl shadow-2xl font-bold text-xl z-[200] border-4 border-white/30 backdrop-blur-md animate-pulse"
                 >
-                    <h1>Delete Item!</h1>
+                    Drop here to Delete
                 </div>
             )}
         </>
@@ -74,29 +74,36 @@ function Columns(props) {
     const tasks = useSelector(state => state.tasks);
     const [task, setTask] = useState(false);
 
+    const columnTitles = {
+        today: "Today",
+        this_week: "This Week",
+        later: "Later"
+    };
+
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-xl min-w-[320px] max-w-[360px] flex flex-col gap-5 mx-auto border border-teal-100/50">
-            <h2 className="text-2xl font-extrabold text-[#0d9488] tracking-tight border-b border-teal-200/50 pb-2">
-                {type}
+        <div className="bg-[#ffffff] rounded-2xl p-6 shadow-2xl min-w-[320px] max-w-[380px] flex flex-col gap-5 border-2 border-[#14b8a6]/20 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url(...)] opacity-60 z-0" />
+                <div className="absolute inset-0 bg-[radial-gradient(...)] z-0" />
+            <h2 className="text-2xl font-extrabold text-[#0f172a] tracking-tight pb-3 border-b-2 border-[#14b8a6]/30 relative z-10">
+                {columnTitles[type] || type}
             </h2>
-            <div className="flex flex-col gap-3 min-h-[200px]">
+
+            <div className="flex flex-col gap-4 min-h-[300px] relative z-10">
                 {tasks.tasks[type] && Object.entries(tasks.tasks[type]).map(([key, value]) => (
-                    <span key={key}>
-                        <DraggableTaskButton id={key} value={value} />
-                    </span>
+                    <DraggableTaskButton key={key} id={key} value={value} />
                 ))}
             </div>
-            <div className="mt-auto">
+
+            <div className="mt-auto relative z-10">
                 <button
-                    onClick={() => {
-                        setTask(true);
-                    }}
-                    className="w-full bg-[#7c3aed] text-white py-3 rounded-xl hover:bg-[#6d28d9] transition-all duration-300 font-semibold text-base shadow-md hover:shadow-lg"
+                    onClick={() => setTask(true)}
+                    className="w-full bg-[#14b8a6] text-white py-4 rounded-xl hover:bg-[#ef4444] hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 font-bold text-base shadow-lg hover:scale-105"
                 >
-                    Add Task
+                    + Add Task
                 </button>
             </div>
-            <Addtask priority={type} stopShow={() => { setTask(false) }} show={task} />
+
+            <Addtask priority={type} show={task} stopShow={() => setTask(false)} />
         </div>
     );
 }
