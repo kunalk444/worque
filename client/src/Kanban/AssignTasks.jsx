@@ -1,124 +1,154 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addData } from '../slices/insideTask';
 
-function Members(props){
-    const members=useSelector(state=>state.insideTask.taskData.current_members);
-    const id=useSelector(state=>state.insideTask.taskData._id);
-    const dispatch=useDispatch();
-    if(!props.show)return null;
-    
-    async function handleMemberAssigned(member,subtask){
-        const data=await fetch("http://localhost:5000/tasks/assignsubtasks",{
-            method:"POST",
-            body:JSON.stringify({member,subtask,id}),
-            credentials:"include",
-            headers:{
-                'Content-type':'application/json'
-            }
-        })
-        const res=await data.json();
-        console.log(res);
-        if(res.success){
-            res.newData.isVisible=true;
+function Members(props) {
+    const members = useSelector(state => state.insideTask.taskData.current_members);
+    const id = useSelector(state => state.insideTask.taskData._id);
+    const dispatch = useDispatch();
+    if (!props.show) return null;
+
+    async function handleMemberAssigned(member, subtask) {
+        const data = await fetch("http://localhost:5000/tasks/assignsubtasks", {
+            method: "POST",
+            body: JSON.stringify({ member, subtask, id }),
+            credentials: "include",
+            headers: { 'Content-type': 'application/json' }
+        });
+        const res = await data.json();
+        if (res.success) {
+            res.newData.isVisible = true;
             dispatch(addData(res.newData));
             props.msg();
-            props.stopShow();    
+            props.stopShow();
         }
-    } 
-    
-    return(
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl border border-gray-200 relative">
+    }
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center z-[400000] pointer-events-none">
+            <div className="bg-[#ffffff] rounded-2xl p-10 w-full max-w-md shadow-2xl pointer-events-auto
+                            border-4 border-[#14b8a6]/50
+                            bg-[url('data:image/svg+xml,%3Csvg width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h20v20H0z%22 fill=%22none%22/%3E%3Ccircle cx=%221%22 cy=%221%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3Ccircle cx=%229%22 cy=%229%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3Ccircle cx=%2219%22 cy=%2219%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3C/svg%3E')] 
+                            bg-[radial-gradient(circle_at_50%_50%,rgba(20,184,166,0.25),transparent_70%)]
+                            shadow-2xl ring-8 ring-[#14b8a6]/20">
+
                 <button 
                     onClick={props.stopShow}
-                    className="absolute top-4 right-4 text-2xl font-bold text-gray-600 hover:text-gray-800 transition-colors"
+                    className="absolute top-4 right-4 w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm 
+                               flex items-center justify-center text-[#0f172a] hover:text-[#ef4444] 
+                               text-3xl font-bold shadow-xl hover:scale-110 transition-all z-10"
                 >
                     X
                 </button>
+
+                <h3 className="text-2xl font-extrabold text-[#0f172a] text-center mb-8">Assign To</h3>
+
                 <select 
-                    className="w-full p-4 text-lg border-2 border-[#0d9488] rounded-xl focus:outline-none focus:ring-4 focus:ring-[#0d9488]/30 transition duration-200 bg-white text-gray-800"
+                    className="w-full px-6 py-5 text-lg font-semibold text-[#0f172a] bg-white border-4 border-[#14b8a6]/40 
+                               rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#14b8a6]/50 
+                               shadow-inner cursor-pointer"
                     defaultValue=""
-                    onChange={
-                        function(e){
-                            handleMemberAssigned(e.target.value,props.selectedTask)
-                        }
-                    }
+                    onChange={(e) => handleMemberAssigned(e.target.value, props.selectedTask)}
                 >
-                    <option value="" disabled className="text-gray-500">Select a member</option>
-                    {
-                        members && members.map((user, idx) => (
-                            <option key={idx} value={user} className="text-gray-700">
-                                {user}
-                            </option>
-                        ))
-                    }
+                    <option value="" disabled>Select a member</option>
+                    {members && members.map((user, idx) => (
+                        <option key={idx} value={user} className="py-3 text-base">
+                            {user}
+                        </option>
+                    ))}
                 </select>
             </div>
         </div>
-    )
+    );
 }
 
 function AssignTasks(props) {
-    const tasks=useSelector(state=>state.insideTask.taskData.sub_tasks);
-    const [showMembers,setShowMembers]=useState(false);
-    const [selectedTask,setSelectedTask]=useState();
-    const [showMsg,setShowMsg]=useState(false);
-    useEffect(()=>{
-        if(showMsg)setTimeout(()=>setShowMsg(false),1700);
-    },[showMsg]);
-    if(!props.show)return null;    
+    const tasks = useSelector(state => state.insideTask.taskData.sub_tasks);
+    const [showMembers, setShowMembers] = useState(false);
+    const [selectedTask, setSelectedTask] = useState();
+    const [showMsg, setShowMsg] = useState(false);
+
+    useEffect(() => {
+        if (showMsg) setTimeout(() => setShowMsg(false), 1700);
+    }, [showMsg]);
+
+    if (!props.show) return null;
+
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-40 p-6">
-            <div className="bg-white rounded-2xl p-10 max-w-3xl w-full shadow-2xl border-l-4 border-[#0d9488] h-[75vh] overflow-y-auto relative">
-                {showMsg && 
-                    <h3 className="text-xl font-medium text-white bg-[#0d9488]/90 px-5 py-2.5 rounded-lg text-center mb-6 shadow-md animate-pulse">
-                        Sub-Task Assigned! 
-                    </h3>
-                }
-                <h2 className="text-4xl font-extrabold text-[#0d9488] mb-10 text-center tracking-wide">
-                    Assign Tasks
-                </h2>
-                <button 
-                    onClick={props.stopShow}
-                    className="absolute top-8 right-8 text-3xl font-bold text-gray-700 hover:text-gray-900 transition-colors bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg"
-                >
-                    X
-                </button>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {
-                        tasks && Object.keys(tasks).map((element) => {
-                            return (tasks[element].length===0 && 
+        <>
+            <div className="fixed inset-0 bg-[#1e293b]/85 backdrop-blur-xl z-[350000]" onClick={props.stopShow} />
+
+            <div className="fixed inset-0 flex items-center justify-center z-[350001] pointer-events-none">
+                <div className="bg-[#ffffff] rounded-2xl p-10 w-full max-w-4xl shadow-2xl pointer-events-auto
+                                border-4 border-[#14b8a6]/50 h-[75vh] overflow-y-auto relative
+                                bg-[url('data:image/svg+xml,%3Csvg width=%2220%22 height=%2220%22 viewBox=%220 0 20 20%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M0 0h20v20H0z%22 fill=%22none%22/%3E%3Ccircle cx=%221%22 cy=%221%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3Ccircle cx=%229%22 cy=%229%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3Ccircle cx=%2219%22 cy=%2219%22 r=%221%22 fill=%22rgba(20,184,166,0.12)%22/%3E%3C/svg%3E')] 
+                                bg-[radial-gradient(circle_at_50%_50%,rgba(20,184,166,0.22),transparent_70%)]
+                                shadow-2xl ring-8 ring-[#14b8a6]/15">
+
+                    {showMsg && (
+                        <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-[#14b8a6] text-white px-10 py-4 
+                                        rounded-full font-bold text-xl shadow-2xl animate-bounce z-50">
+                            Sub-Task Assigned!
+                        </div>
+                    )}
+
+                    <button 
+                        onClick={props.stopShow}
+                        className="absolute top-6 right-6 w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm 
+                                   flex items-center justify-center text-[#0f172a] hover:text-[#ef4444] 
+                                   text-4xl font-bold shadow-2xl hover:scale-110 transition-all z-50"
+                    >
+                        X
+                    </button>
+
+                    <h2 className="text-5xl font-extrabold text-[#0f172a] text-center mb-12 tracking-tight">
+                        Assign Sub-Tasks
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+                        {tasks && Object.keys(tasks).map((element) => (
+                            tasks[element].length === 0 && (
                                 <button
-                                    value={element}
                                     key={element}
-                                    onClick={function(e){
-                                        console.log(e.currentTarget.value);
-                                        setSelectedTask(e.currentTarget.value);
+                                    onClick={() => {
+                                        setSelectedTask(element);
                                         setShowMembers(true);
                                     }}
-                                    className="group bg-gradient-to-r from-[#0d9488]/10 to-[#7c3aed]/10 p-5 rounded-xl border-2 border-dashed border-[#0d9488] hover:border-solid hover:from-[#0d9488]/20 hover:to-[#7c3aed]/20 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                    className="group bg-gradient-to-br from-[#14b8a6]/10 to-[#ef4444]/10 p-8 rounded-2xl 
+                                               border-4 border-dashed border-[#14b8a6]/50 hover:border-solid 
+                                               hover:from-[#14b8a6]/20 hover:to-[#ef4444]/20 
+                                               transition-all duration-400 shadow-xl hover:shadow-2xl 
+                                               hover:scale-105 hover:-translate-y-2"
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-lg font-semibold text-gray-800 group-hover:text-[#0d9488] transition-colors">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="text-3xl font-extrabold text-[#0f172a] group-hover:text-[#14b8a6] transition">
                                             {element}
-                                        </span>
-                                        <svg className="w-5 h-5 text-[#0d9488] group-hover:scale-110 transition-transform"
-                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                        </svg>
+                                        </div>
+                                        <div className="w-16 h-16 bg-[#14b8a6]/20 rounded-full flex items-center justify-center 
+                                                        group-hover:bg-[#14b8a6] group-hover:scale-110 transition-all">
+                                            <svg className="w-10 h-10 text-[#14b8a6] group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-sm font-medium text-[#0f172a]/70">Click to assign member</p>
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-1">Click to assign</p>
                                 </button>
                             )
-                        })
-                    }
-                </div>
+                        ))}
+                    </div>
 
-                {showMembers && <Members show={showMembers} selectedTask={selectedTask} stopShow={()=>setShowMembers(false)} msg={()=>setShowMsg(true)}/>}
+                    {showMembers && (
+                        <Members 
+                            show={showMembers} 
+                            selectedTask={selectedTask} 
+                            stopShow={() => setShowMembers(false)} 
+                            msg={() => setShowMsg(true)}
+                        />
+                    )}
+                </div>
             </div>
-        </div>
-    )
+        </>
+    );
 }
 
-export default AssignTasks
+export default AssignTasks;

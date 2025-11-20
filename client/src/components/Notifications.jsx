@@ -5,6 +5,7 @@ import { saveNotificationsInRedux } from '../slices/notificationSlice';
 
 import ViewTask from '../Kanban/ViewTask';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 async function getUserNotifications(userId) {
     const res = await fetch("http://localhost:5000/user/notifications", {
@@ -94,6 +95,14 @@ function Notifications() {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+            <Link
+                to={-1}
+                className="inline-flex items-center gap-2 text-[#1e293b] font-semibold mb-10 
+                 bg-white px-4 py-2 rounded-xl shadow hover:bg-[#2dd4bf]/20 
+                hover:text-[#0f766e] transition-all duration-300"
+            >
+                <span className="text-xl">←</span> Go Back
+            </Link>
             <h2 className="text-4xl font-extrabold text-[#0d9488] mb-10 tracking-wide text-center">Notifications</h2>
             <div className="w-full max-w-4xl flex flex-col gap-4">
                 {notifications && [...notifications].reverse().map((element, index) => (

@@ -182,6 +182,7 @@ function ViewTask(props) {
           type="current"
           members={currTask.current_members}
           admin={currTask.admin}
+          id={currTask._id}
           zIndexOverride="z-[200]"
         />
       )}

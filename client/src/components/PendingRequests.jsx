@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { handlePendingRequests } from '../pendingRequestHelper';
+import { Link } from 'react-router';
 
 function PendingRequests() {
     const [pendingRequests, setPendingRequests] = useState();
@@ -36,7 +37,14 @@ function PendingRequests() {
                 <h1 className="text-5xl font-extrabold text-[#1e293b] mb-14 tracking-tight text-center">
                     Pending Requests
                 </h1>
-
+                <Link
+                    to={-1}
+                    className="inline-flex items-center gap-2 text-[#1e293b] font-semibold mb-10 
+                    bg-white px-4 py-2 rounded-xl shadow hover:bg-[#2dd4bf]/20 
+                    hover:text-[#0f766e] transition-all duration-300"
+                >
+                    <span className="text-xl">←</span> Go Back
+                </Link>
                 {acceptFlag && (
                     <h4 className="text-2xl font-semibold text-[#1e293b] bg-[#2dd4bf]/20 px-6 py-3 rounded-xl text-center mb-8 shadow-md animate-pulse">
                         Request Accepted!

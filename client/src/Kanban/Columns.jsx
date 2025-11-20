@@ -50,9 +50,37 @@ function DraggableTaskButton(props) {
             <button
                 ref={dragRef}
                 onClick={() => setViewTask(true)}
-                className="w-full bg-[#ffffff] text-[#0f172a] text-left px-5 py-4 rounded-xl hover:bg-[#14b8a6]/10 hover:text-[#14b8a6] hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-base border border-[#14b8a6]/20 cursor-move"
+                className="w-full bg-[#ffffff] text-[#0f172a] p-4 rounded-xl border-2 border-[#14b8a6]/20 
+                         hover:bg-[#14b8a6]/10 hover:border-[#14b8a6]/40 hover:scale-[1.02] 
+                         transition-all duration-300 shadow-md hover:shadow-lg cursor-move
+                         flex flex-col gap-2 group"
             >
-                {value}
+                
+                <div className="font-bold text-base text-left leading-tight">
+                    {value.desc}
+                </div>
+
+               
+                <div className="flex justify-end text-xs font-medium text-[#0f172a]/70">
+                    <div className="flex flex-col items-end gap-0.5">
+                        {value.assignedAt && (
+                            <p>
+                                <span className="text-[#0f172a]/60">Assigned:</span>{' '}
+                                <span className="font-semibold text-[#14b8a6]">
+                                    {new Date(value.assignedAt).toLocaleDateString()}
+                                </span>
+                            </p>
+                        )}
+                        {value.expiresAt && (
+                            <p>
+                                <span className="text-[#0f172a]/60">Due:</span>{' '}
+                                <span className="font-semibold text-[#14b8a6]">
+                                    {new Date(value.expiresAt).toLocaleDateString()}
+                                </span>
+                            </p>
+                        )}
+                    </div>
+                </div>
             </button>
 
             {viewTask && <ViewTask show={viewTask} taskId={id} stopShow={() => setViewTask(false)} />}
@@ -60,9 +88,13 @@ function DraggableTaskButton(props) {
             {delWidget && (
                 <div
                     ref={delRef}
-                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#ef4444] text-white px-10 py-6 rounded-2xl shadow-2xl font-bold text-xl z-[200] border-4 border-white/30 backdrop-blur-md animate-pulse"
+                    className="fixed inset-0 flex items-center justify-center z-[1000] pointer-events-none"
                 >
-                    Drop here to Delete
+                    <div className="bg-[#ef4444] text-white px-14 py-10 rounded-3xl shadow-2xl font-extrabold text-3xl 
+                                    border-8 border-white/40 backdrop-blur-lg animate-pulse pointer-events-auto
+                                    tracking-widest">
+                        DROP TO DELETE
+                    </div>
                 </div>
             )}
         </>
@@ -71,8 +103,10 @@ function DraggableTaskButton(props) {
 
 function Columns(props) {
     const type = props.type;
-    const tasks = useSelector(state => state.tasks);
+    const tasktemp = useSelector(state => state.tasks);
     const [task, setTask] = useState(false);
+    const tasks=tasktemp.tasks;
+    const currTasks=tasks[type];
 
     const columnTitles = {
         today: "Today",
@@ -89,9 +123,11 @@ function Columns(props) {
             </h2>
 
             <div className="flex flex-col gap-4 min-h-[300px] relative z-10">
-                {tasks.tasks[type] && Object.entries(tasks.tasks[type]).map(([key, value]) => (
-                    <DraggableTaskButton key={key} id={key} value={value} />
-                ))}
+                {
+                    currTasks && Object.keys(currTasks).map((element,index)=>(
+                        <DraggableTaskButton key={index} id={element} value={currTasks[element]} />
+                    ))
+                }
             </div>
 
             <div className="mt-auto relative z-10">

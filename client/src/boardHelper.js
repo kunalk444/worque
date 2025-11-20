@@ -13,18 +13,27 @@ export const loadSavedTasks=async(email)=>{
     res.success && res.tasks.forEach(element => {
         switch (element.task_priority) {
             case "today":
-                obj.today[element._id]=element.task_description;
+                obj.today[element._id]={
+                    desc:element.task_description,
+                    assignedAt:element.assignedAt,
+                    expiresAt:element.expiresAt
+                };
                 break;
             case "later":
-                obj.later[element._id]=element.task_description;
+                obj.later[element._id]={desc:element.task_description,assignedAt:element.assignedAt};
                 break;
             case "this_week":
-                obj.this_week[element._id]=element.task_description;
+                obj.this_week[element._id]={
+                    desc:element.task_description,
+                    assignedAt:element.assignedAt,
+                    expiresAt:element.expiresAt
+                };
                 break;
             default:
                 break;
         }
     });
+    
     return obj;
     
 }

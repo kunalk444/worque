@@ -6,8 +6,7 @@ const taskSlice=createSlice({
     },
     reducers:{
         saveTasksInRedux:(state,action)=>{
-            const obj=action.payload;
-            state.tasks=obj;
+            state.tasks=action.payload;
         }
     }
 })
