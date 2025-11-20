@@ -37,6 +37,9 @@ const taskSchema=mongoose.Schema({
     },
     expiresAt:{
         type:Date,
+    },
+    assignedAt:{
+        type:Date,
     }
 
 },
@@ -63,13 +66,15 @@ taskSchema.pre("save",function(next){
     if(task.task_priority==="this_week"){
         this.expiresAt=new Date(Date.now() + (7-new Date().getDay())*24*3600*1000);
     }
+    this.assignedAt=new Date().toLocaleString();
+    console.log(this.assignedAt);
     next();
 });
 
 
 taskSchema.post("save",async function(){
     const task=this;
-    const ifEmailAdded=await addMembers(task.invited_members);
+    const ifEmailAdded=await addMembers(task.invited_members,task.task_description);
     const admin=task.admin;
     for(let i=0;i<task.invited_members.length;i++){
         const mail=task.invited_members[i];

@@ -3,7 +3,7 @@ const app=express();
 const {Router}=require("express");
 const taskRouter=Router();
 const taskModel=require("../models/tasks.js");
-const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks,addSubTasks,handleCompletedSubtask,handleDraggedTask,deleteTask,unarchiveTask} =require("../controllers/tasks.js")
+const {preloadTaskMetaInfo,loadTaskInfo,assignSubTasks,addSubTasks,handleCompletedSubtask,handleDraggedTask,deleteTask,unarchiveTask,handleNewMember} =require("../controllers/tasks.js")
 const {loadChats,getMembers} = require("../controllers/chats.js")
 taskRouter.post("/addTasks",async(req,res)=>{
     const {priority,description,emails,subtasks,adminEmail}=req.body;
@@ -73,6 +73,12 @@ taskRouter.post("/deletetask",async(req,res)=>{
 taskRouter.post("/unarchivetask",async(req,res)=>{
     const {taskId,notifId,adminId}=req.body;
     const ans=await unarchiveTask(taskId,notifId,adminId);
+    return res.json(ans);
+})
+
+taskRouter.post("/addmembers",async (req,res)=>{
+    const {emailId,id}=req.body;
+    const ans= await handleNewMember(emailId,id);
     return res.json(ans);
 })
 

@@ -4,8 +4,9 @@ const userModel=require("../models/user.js");
 const mongoose=require("mongoose");
 const archiveModel = require("../models/archivedtasks.js");
 const pendingRequestsModel = require("../models/pendingrequests.js");
+const {addMembers}=require("../services/mail.js")
 async function preloadTaskMetaInfo(email){
-    const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1});
+    const obj=await taskModel.find({current_members:{$in:[email]}},{task_priority:1,task_description:1,assignedAt:1,expiresAt:1});
     return obj;
     
 }
@@ -156,6 +157,31 @@ const unarchiveTask=async(taskId,notifId,adminId)=>{
     return {success:false};
 }
 
+const handleNewMember = async(emailId,id)=>{
+    const task=await taskModel.findOneAndUpdate(
+                    {
+                        _id:id
+                    },
+                    {
+                        $addToSet:{
+                            invited_members:emailId,
+                        }
+                    },
+                    {
+                        new:true,
+                    }
+            );
+    if(task){
+        const user=await userModel.findOneAndUpdate({email:emailId},{$addToSet:{pending_requests:new mongoose.Types.ObjectId(id)}},{new:true});
+        if(!user){
+            const newUser=await pendingRequestsModel.findOneAndUpdate({email:emailId},{$addToSet:{requests:new mongoose.Types.ObjectId(id)}},{upsert:true,new:true});
+        }
+        await addMembers([emailId],task.task_description);
+        return {success:true};   
+    }
+    return {success:false};
+}
+
 module.exports={
     preloadTaskMetaInfo,
     loadTaskInfo,
@@ -164,5 +190,6 @@ module.exports={
     handleCompletedSubtask,
     handleDraggedTask,
     deleteTask,
-    unarchiveTask
+    unarchiveTask,
+    handleNewMember,
 }
